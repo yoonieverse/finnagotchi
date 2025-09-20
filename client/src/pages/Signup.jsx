@@ -13,7 +13,7 @@ export function SignUp() {
   const provider = new GoogleAuthProvider();
   const signInWithGoogle= ()=>{
     signInWithPopup(auth, provider)
-    .then((result) => {
+    .then(async(result) => {
       // This gives you a Google Access Token. You can use it to access the Google API.
       console.log('works')
       const credential = GoogleAuthProvider.credentialFromResult(result);
@@ -21,7 +21,20 @@ export function SignUp() {
       // The signed-in user info.
       const user = result.user;
       // IdP data available using getAdditionalUserInfo(result)
-      // ...
+      const [first_name, last_name] = user.displayName.split(" ");
+      const res = await fetch("http://localhost:3333/createuser", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          first_name,
+          last_name,
+          email: user.email,
+          uid: user.uid,
+        }),
+      });
+      console.log('fetched')
     }).catch((error) => {
       // Handle Errors here.
       console.log('no works')

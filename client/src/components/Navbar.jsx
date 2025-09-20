@@ -36,6 +36,7 @@ export default function Navbar() {
         <li><Link to="/budget" >Budget</Link></li>
         <li><Link to="/portfolio" >Portfolio</Link></li>
         <li><Link to="/plaid" >Plaid</Link></li>
+        <li><Link to="/settings" >Settings</Link></li>
       </ul>
 
       {/* Right: Login Button */}
