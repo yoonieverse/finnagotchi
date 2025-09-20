@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { usePlaidLink } from 'react-plaid-link';
 import axios from 'axios';
 
-axios.defaults.baseURL = 'http://localhost:8000';
+axios.defaults.baseURL = 'http://localhost:3333';
 
 export function Plaid() {
   const [linkToken, setLinkToken] = useState('');
@@ -35,7 +35,7 @@ export function Plaid() {
     token: linkToken,
     onSuccess: (public_token, metadata) => {
       console.log('SUCCESS! Public token:', public_token);
-      alert(`Success! Public token: ${public_token}`);
+      // alert(`Success! Public token: ${public_token}`);
       // TODO: Send to server to exchange for access token
     },
   });

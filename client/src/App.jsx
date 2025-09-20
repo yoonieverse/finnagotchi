@@ -25,7 +25,7 @@ function App() {
 
   return (
     <div>
-     <Navbar/>
+     {auth.currentUser&&<Navbar/>}
      <Outlet/>
     </div>
   )
