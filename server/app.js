@@ -469,12 +469,54 @@ app.post("/createuser", async (req, res) => {
 });
 
 app.put("/budget", async (req, res) => {
-    
-})
+  try {
+    console.log('wasssup')
+    const { uid, budget_preference } = req.body;
 
-app.get("/budget", async (req, res) => {
+    if (!uid || !budget_preference) {
+      return res.status(400).json({ error: "uid and budget_preferences are required" });
+    }
 
-})
+    // Validate budget_preferences keys
+    const { needs, wants, savings } = budget_preference;
+    if (
+      typeof needs !== "number" ||
+      typeof wants !== "number" ||
+      typeof savings !== "number"
+    ) {
+      return res.status(400).json({ error: "needs, wants, savings must be numbers" });
+    }
+
+    // Update Firestore
+    await db.collection("users").doc(uid).update({
+      budget_preference: { needs, wants, savings },
+    });
+
+    res.json({ message: "Budget preferences updated successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.get("/user", async (req, res) => {
+  try {
+    const { uid } = req.query;
+
+    if (!uid) return res.status(400).json({ error: "UID is required" });
+
+    const userDoc = await db.collection("users").doc(uid).get();
+
+    if (!userDoc.exists) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json(userDoc.data());
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 
 
