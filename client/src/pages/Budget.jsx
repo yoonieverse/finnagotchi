@@ -1,10 +1,12 @@
 // client/src/pages/Budget.jsx
 import { useContext, useState, useMemo } from "react";
 import { TransactionContext } from "../contexts/transactionContext";
+import { getAuth } from "firebase/auth";
 
 export function Budget() {
     const { transactions } = useContext(TransactionContext);
     const [budgetData, setBudgetData] = useState(null);
+    const auth= getAuth();
 
     // Simple categorization rules - you can expand these later
     const categorizeTransaction = (transaction) => {
@@ -86,7 +88,7 @@ export function Budget() {
         return { type: 'wants', subcategory: 'personal_purchase' };
     };
 
-    const generateBudget = () => {
+    const generateBudget =async () => {
         if (!transactions || transactions.length === 0) {
             alert('No transactions available to generate budget');
             return;
@@ -149,6 +151,14 @@ export function Budget() {
         });
 
         setBudgetData(budget);
+        const response = await fetch('http://localhost:3333/budget', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({budget, uid:auth.currentUser.uid}),
+        });
+
         console.log('Generated Budget:', budget); // For debugging
     };
 
