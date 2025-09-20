@@ -242,7 +242,33 @@ app.post("/createuser", async (req, res) => {
                 first_name,
                 last_name: last_name ?? '',
                 email,
-                budget_preference: { needs: 50, wants: 30, savings: 20 }
+                budget: {
+                "needs":{
+                    "budget_percent":50,
+                    "subcategories":{
+                    "food_drink":[
+                    ],
+                    "medical":[],
+                    "transportation":[],
+                    "home_improvement":[],
+                    "rent_utilities":[],
+                    "medical":[],
+                    "governmen_and_non_profit":[]
+                    }
+                },
+                "wants":{
+                    "budget_percent":30,
+                    "subcategories":{
+                    "entertainment":[],
+                    "personal_purchase":[],
+                    "travel":[]
+                    }
+                },
+                "spendings":{
+                    "budget_percent":20,
+                    "purchases":[]
+                }
+                }
             }); 
             
             res.json({ text: 'User created successfully' });
@@ -256,30 +282,22 @@ app.post("/createuser", async (req, res) => {
 // Update budget preferences
 app.put("/budget", async (req, res) => {
     try {
-        const { uid, budget_preference } = req.body;
+        const { uid, budget } = req.body;
 
-        if (!uid || !budget_preference) {
-            return res.status(400).json({ error: "uid and budget_preference are required" });
+        if (!uid || !budget) {
+            return res.status(400).json({ error: "uid and budget are required" });
         }
 
-        // Validate budget_preference keys
-        const { needs, wants, savings } = budget_preference;
-        if (
-            typeof needs !== "number" ||
-            typeof wants !== "number" ||
-            typeof savings !== "number"
-        ) {
-            return res.status(400).json({ error: "needs, wants, savings must be numbers" });
-        }
+       
 
         // Validate that percentages add up to 100
-        if (needs + wants + savings !== 100) {
+        if (budget.needs.budget_percent + budget.wants.budget_percent + budget.savings.budget_percent !== 100) {
             return res.status(400).json({ error: "Budget percentages must add up to 100" });
         }
 
         // Update Firestore
         await db.collection("users").doc(uid).update({
-            budget_preference: { needs, wants, savings },
+            budget: budget,
         });
 
         res.json({ message: "Budget preferences updated successfully" });
