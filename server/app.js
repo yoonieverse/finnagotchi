@@ -7,6 +7,7 @@ const { initializeApp, applicationDefault, cert } = require('firebase-admin/app'
 const { getFirestore, Timestamp, FieldValue, Filter, Transaction, collection, query, where, getDocs, documentId } = require('firebase-admin/firestore');
 const { getAuth } = require("firebase-admin/auth");
 const admin = require('firebase-admin');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 // Initialize an Express application
 const app = express();
@@ -16,6 +17,52 @@ app.use(cors());
 
 // Parse JSON request bodies
 app.use(express.json());
+
+//  Initialize a gemini model
+const genAI = new GoogleGenerativeAI(process.env.API_KEY);
+
+// ===================
+// Gemini API
+// ===================
+
+async function analyzeFinancesFromData(transactionData) {
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const prompt = `
+    Analyze the CHECKING ACCOUNT transactions and return a simple text analysis:
+
+    Transaction Data:
+    ${JSON.stringify(transactionData)}
+
+    Provide a brief financial analysis (2-3 sentences) followed by one specific money-saving tip.
+
+    Format your response as plain text like this:
+    ANALYSIS: [Your analysis here]
+
+    MONEY-SAVING TIP: [Your tip here]
+
+    Do not use JSON, markdown, or any special formatting. Just plain text.
+    `;
+
+    const response = await model.generateContent(prompt);
+    return response.response.text().trim();
+}
+
+// AI endpoint
+app.post('/analyze_transactions', async (req, res) => {
+    try {
+        const { transactions } = req.body;
+        if (!transactions || !Array.isArray(transactions)) {
+            return res.status(400).json({ error: 'transactions array is required' });
+        }
+        const analysis = await analyzeFinancesFromData(transactions);
+        res.json({ analysis });
+    } catch (err) {
+        console.error('Error analyzing transactions:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+
 
 // Initialize Firebase Admin
 initializeApp({
