@@ -9,7 +9,7 @@ import { Plaid } from './pages/plaid.jsx'
 import { Portfolio } from './pages/Portfolio.jsx'
 
 import { Home } from './pages/Home.jsx'
-import { SignUp } from './pages/signup.jsx'
+import { SignUp } from './pages/Signup.jsx'
 import { Settings } from './pages/Settings.jsx'
 
 const router = createBrowserRouter([
