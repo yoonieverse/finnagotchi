@@ -1,14 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { usePlaidLink } from 'react-plaid-link';
 import axios from 'axios';
+import { TransactionContext } from '../contexts/transactionContext';
+
 
 axios.defaults.baseURL = 'http://localhost:3333';
+
 
 // Transaction Table Component
 const TransactionTable = ({ transactions }) => {
   const [sortField, setSortField] = useState('date');
   const [sortDirection, setSortDirection] = useState('desc');
   const [filterCategory, setFilterCategory] = useState('');
+  
 
   // Category mapping to user-friendly names with colors
   const categoryMapping = {
@@ -298,6 +302,7 @@ const TransactionTable = ({ transactions }) => {
 
 // Main Plaid Component
 export function Plaid() {
+  const transactionRef = useContext(TransactionContext);
   const [linkToken, setLinkToken] = useState('');
   const [accessToken, setAccessToken] = useState('');
   const [transactions, setTransactions] = useState([]);
@@ -372,6 +377,8 @@ export function Plaid() {
 
       if (response.data.transactions) {
         setTransactions(response.data.transactions);
+        console.log(response.data.transactions)
+        transactionRef.setTransactions(response.data.transactions);
         console.log(`Fetched ${response.data.transactions.length} transactions`);
         // Automatically analyze transactions after fetching
         analyzeTransactions(response.data.transactions);

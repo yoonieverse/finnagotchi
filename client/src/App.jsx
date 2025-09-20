@@ -1,10 +1,12 @@
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Navbar from "./components/Navbar"
 import { Outlet, useNavigate } from "react-router-dom"
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { TransactionContext } from "./contexts/transactionContext";
 
 
 function App() {
+  const [transactions, setTransactions ] = useState(null);
   const auth = getAuth();
   const navigate = useNavigate();
   useEffect(() => {
@@ -26,7 +28,9 @@ function App() {
   return (
     <div>
      {auth.currentUser&&<Navbar/>}
-     <Outlet/>
+     <TransactionContext.Provider value = {{transactions, setTransactions}}> 
+      <Outlet/>
+     </TransactionContext.Provider>
     </div>
   )
 }
