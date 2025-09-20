@@ -1,14 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { usePlaidLink } from 'react-plaid-link';
 import axios from 'axios';
+import { TransactionContext } from '../contexts/transactionContext';
+
 
 axios.defaults.baseURL = 'http://localhost:3333';
+
 
 // Transaction Table Component
 const TransactionTable = ({ transactions }) => {
   const [sortField, setSortField] = useState('date');
   const [sortDirection, setSortDirection] = useState('desc');
   const [filterCategory, setFilterCategory] = useState('');
+  
 
   // Category mapping to user-friendly names with colors
   const categoryMapping = {
@@ -298,6 +302,7 @@ const TransactionTable = ({ transactions }) => {
 
 // Main Plaid Component
 export function Plaid() {
+  const transactionRef = useContext(TransactionContext);
   const [linkToken, setLinkToken] = useState('');
   const [accessToken, setAccessToken] = useState('');
   const [transactions, setTransactions] = useState([]);
@@ -305,6 +310,8 @@ export function Plaid() {
   const [fetchingTransactions, setFetchingTransactions] = useState(false);
   const [error, setError] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [analysis, setAnalysis] = useState('');
+  const [analyzing, setAnalyzing] = useState(false);
 
   // Fetch link token on component mount
   useEffect(() => {
@@ -370,7 +377,11 @@ export function Plaid() {
 
       if (response.data.transactions) {
         setTransactions(response.data.transactions);
+        console.log(response.data.transactions)
+        transactionRef.setTransactions(response.data.transactions);
         console.log(`Fetched ${response.data.transactions.length} transactions`);
+        // Automatically analyze transactions after fetching
+        analyzeTransactions(response.data.transactions);
       } else {
         setTransactions([]);
         console.log('No transactions found');
@@ -383,12 +394,43 @@ export function Plaid() {
     }
   };
 
+  // Analyze transactions using Gemini AI
+  const analyzeTransactions = async (transactionData) => {
+    if (!transactionData || transactionData.length === 0) {
+      setAnalysis('No transactions to analyze.');
+      return;
+    }
+
+    try {
+      setAnalyzing(true);
+      setError('');
+      
+      const response = await axios.post('/analyze_transactions', {
+        transactions: transactionData
+      });
+
+      if (response.data.analysis) {
+        setAnalysis(response.data.analysis);
+        console.log('Analysis received:', response.data.analysis);
+      } else {
+        setAnalysis('Unable to generate analysis at this time.');
+      }
+    } catch (error) {
+      console.error('Error analyzing transactions:', error);
+      setError(`Error analyzing transactions: ${error.response?.data?.error || error.message}`);
+      setAnalysis('Analysis failed. Please try again.');
+    } finally {
+      setAnalyzing(false);
+    }
+  };
+
   // Reset all state
   const handleReset = () => {
     setAccessToken('');
     setTransactions([]);
     setIsAuthenticated(false);
     setError('');
+    setAnalysis('');
   };
 
   const { open, ready } = usePlaidLink({
@@ -498,6 +540,23 @@ export function Plaid() {
             </span>
           </button>
 
+          {transactions.length > 0 && (
+            <button
+              onClick={() => analyzeTransactions(transactions)}
+              disabled={analyzing}
+              className={`group relative px-8 py-4 rounded-2xl font-semibold text-white transition-all duration-300 shadow-lg transform hover:scale-105 ${
+                analyzing
+                  ? 'bg-gray-400 cursor-not-allowed shadow-gray-200'
+                  : 'bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 shadow-purple-200 hover:shadow-purple-300'
+              }`}
+            >
+              <span className="flex items-center space-x-2">
+                <span>{analyzing ? 'Analyzing...' : '🤖 Analyze with AI'}</span>
+                {analyzing && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>}
+              </span>
+            </button>
+          )}
+
           {isAuthenticated && (
             <button
               onClick={handleReset}
@@ -516,6 +575,56 @@ export function Plaid() {
         {/* Transaction Table */}
         {transactions.length > 0 && (
           <TransactionTable transactions={transactions} />
+        )}
+
+        {/* AI Analysis Section */}
+        {(analysis || analyzing) && (
+          <div className="mt-12 space-y-6 animate-fade-in">
+            <div className="text-center">
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+                AI Financial Analysis
+              </h2>
+              <p className="text-gray-600">Powered by Gemini AI</p>
+            </div>
+            
+            <div className="max-w-4xl mx-auto">
+              <div className="bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 p-8 rounded-3xl shadow-xl border border-purple-200">
+                {analyzing ? (
+                  <div className="text-center py-8">
+                    <div className="relative">
+                      <div className="w-12 h-12 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-4"></div>
+                      <div className="absolute inset-0 w-12 h-12 border-4 border-pink-200 border-t-pink-600 rounded-full animate-spin mx-auto animation-delay-150"></div>
+                    </div>
+                    <div className="text-lg font-semibold text-purple-700 mb-2">Analyzing Your Transactions</div>
+                    <div className="text-purple-600">AI is reviewing your financial patterns...</div>
+                  </div>
+                ) : analysis ? (
+                  <div className="space-y-6">
+                    <div className="flex items-start space-x-4">
+                      <div className="text-3xl">🤖</div>
+                      <div className="flex-1">
+                        <div className="prose prose-lg max-w-none">
+                          <div className="whitespace-pre-wrap text-gray-800 leading-relaxed">
+                            {analysis}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-center pt-4">
+                      <button
+                        onClick={() => analyzeTransactions(transactions)}
+                        disabled={analyzing}
+                        className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-pink-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        🔄 Refresh Analysis
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          </div>
         )}
 
         {/* Instructions */}

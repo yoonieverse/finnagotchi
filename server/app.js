@@ -7,6 +7,7 @@ const { initializeApp, applicationDefault, cert } = require('firebase-admin/app'
 const { getFirestore, Timestamp, FieldValue, Filter, Transaction, collection, query, where, getDocs, documentId } = require('firebase-admin/firestore');
 const { getAuth } = require("firebase-admin/auth");
 const admin = require('firebase-admin');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 // Initialize an Express application
 const app = express();
@@ -16,6 +17,79 @@ app.use(cors());
 
 // Parse JSON request bodies
 app.use(express.json());
+
+//  Initialize a gemini model
+const genAI = new GoogleGenerativeAI(process.env.API_KEY);
+
+// ===================
+// Gemini API
+// ===================
+
+async function analyzeFinancesFromData(transactionData) {
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    
+    // Process transaction data for better analysis
+    const processedData = transactionData.map(t => ({
+        date: t.date,
+        merchant: t.merchant_name || t.name || 'Unknown',
+        amount: t.amount,
+        category: t.personal_finance_category?.primary || 'Other',
+        description: t.name
+    }));
+
+    const prompt = `
+    You are a financial advisor AI analyzing bank transaction data. Provide a comprehensive analysis of the user's spending patterns and financial health.
+
+    Transaction Data (last 30 days):
+    ${JSON.stringify(processedData, null, 2)}
+
+    Please provide a detailed analysis including:
+
+    1. SPENDING OVERVIEW: Analyze total spending, income, and net flow
+    2. CATEGORY BREAKDOWN: Identify top spending categories and patterns
+    3. FINANCIAL HEALTH: Assess overall financial situation and trends
+    4. SPECIFIC RECOMMENDATIONS: Provide 2-3 actionable money-saving tips
+    5. BUDGET SUGGESTIONS: Suggest budget allocations based on spending patterns
+
+    Format your response as plain text with clear sections. Be specific, helpful, and encouraging. Use emojis to make it engaging but keep it professional. Don't make it too long. make it short yet concise. 
+
+    Example format:
+    📊 SPENDING OVERVIEW
+    [Your analysis here]
+
+    🏷️ CATEGORY BREAKDOWN  
+    [Your analysis here]
+
+    💡 FINANCIAL HEALTH
+    [Your assessment here]
+
+    💰 MONEY-SAVING TIPS
+    [Your recommendations here]
+
+    📈 BUDGET SUGGESTIONS
+    [Your suggestions here]
+    `;
+
+    const response = await model.generateContent(prompt);
+    return response.response.text().trim();
+}
+
+// AI endpoint
+app.post('/analyze_transactions', async (req, res) => {
+    try {
+        const { transactions } = req.body;
+        if (!transactions || !Array.isArray(transactions)) {
+            return res.status(400).json({ error: 'transactions array is required' });
+        }
+        const analysis = await analyzeFinancesFromData(transactions);
+        res.json({ analysis });
+    } catch (err) {
+        console.error('Error analyzing transactions:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+
 
 // Initialize Firebase Admin
 initializeApp({
