@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { TransactionContext } from "./contexts/transactionContext";
 
 function App() {
-  const [transactions, setTransactions] = useState(null);
+  const [transactions, setTransactions] = useState([]);
   const auth = getAuth();
   const navigate = useNavigate();
 

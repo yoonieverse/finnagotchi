@@ -332,6 +332,9 @@ export function Plaid() {
         setLoading(false);
       }
     }
+    setTransactions(transactionRef.transactions ?? [])
+    if (transactionRef.transactions.length>0)
+      setIsAuthenticated(true)
     
     fetchLinkToken();
   }, []);
