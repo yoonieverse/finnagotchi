@@ -70,9 +70,8 @@ export function Budget() {
         }
         
         // WANTS categories - Everything else that's spending
-        if (category === 'food_and_drink') {
-            return { type: 'wants', subcategory: 'food_drink' };
-        } else if (category === 'entertainment' || 
+        
+        if (category === 'entertainment' || 
                    name.includes('netflix') || 
                    name.includes('spotify') || 
                    name.includes('movie') ||
@@ -109,7 +108,6 @@ export function Budget() {
             wants: {
                 budget_percent: 30,
                 subcategories: {
-                    food_drink: [],
                     entertainment: [],
                     personal_purchase: [],
                     travel: []
