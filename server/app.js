@@ -27,20 +27,47 @@ const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 
 async function analyzeFinancesFromData(transactionData) {
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    
+    // Process transaction data for better analysis
+    const processedData = transactionData.map(t => ({
+        date: t.date,
+        merchant: t.merchant_name || t.name || 'Unknown',
+        amount: t.amount,
+        category: t.personal_finance_category?.primary || 'Other',
+        description: t.name
+    }));
+
     const prompt = `
-    Analyze the CHECKING ACCOUNT transactions and return a simple text analysis:
+    You are a financial advisor AI analyzing bank transaction data. Provide a comprehensive analysis of the user's spending patterns and financial health.
 
-    Transaction Data:
-    ${JSON.stringify(transactionData)}
+    Transaction Data (last 30 days):
+    ${JSON.stringify(processedData, null, 2)}
 
-    Provide a brief financial analysis (2-3 sentences) followed by one specific money-saving tip.
+    Please provide a detailed analysis including:
 
-    Format your response as plain text like this:
-    ANALYSIS: [Your analysis here]
+    1. SPENDING OVERVIEW: Analyze total spending, income, and net flow
+    2. CATEGORY BREAKDOWN: Identify top spending categories and patterns
+    3. FINANCIAL HEALTH: Assess overall financial situation and trends
+    4. SPECIFIC RECOMMENDATIONS: Provide 2-3 actionable money-saving tips
+    5. BUDGET SUGGESTIONS: Suggest budget allocations based on spending patterns
 
-    MONEY-SAVING TIP: [Your tip here]
+    Format your response as plain text with clear sections. Be specific, helpful, and encouraging. Use emojis to make it engaging but keep it professional.
 
-    Do not use JSON, markdown, or any special formatting. Just plain text.
+    Example format:
+    📊 SPENDING OVERVIEW
+    [Your analysis here]
+
+    🏷️ CATEGORY BREAKDOWN  
+    [Your analysis here]
+
+    💡 FINANCIAL HEALTH
+    [Your assessment here]
+
+    💰 MONEY-SAVING TIPS
+    [Your recommendations here]
+
+    📈 BUDGET SUGGESTIONS
+    [Your suggestions here]
     `;
 
     const response = await model.generateContent(prompt);
