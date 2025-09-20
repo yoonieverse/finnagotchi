@@ -14,11 +14,7 @@ function App() {
       else if (!data) navigate("/signup");
 
     })
-    const PrintToken = async() => {
-      const idToken = await user.getIdToken(); // JWT
-      console.log("ID Token:", idToken);
-    }
-    PrintToken();
+    
   }, []);
 
   
@@ -29,7 +25,7 @@ function App() {
 
   return (
     <div>
-     <Navbar/>
+     {auth.currentUser&&<Navbar/>}
      <Outlet/>
     </div>
   )
