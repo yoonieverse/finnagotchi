@@ -5,7 +5,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { Budget } from './pages/Budget.jsx'
 
 import { Log } from './pages/Log.jsx'
-import PlaidIntegration from './pages/plaid.jsx'
+import { Plaid } from './pages/plaid.jsx'
 import { Portfolio } from './pages/Portfolio.jsx'
 
 import { Home } from './pages/Home.jsx'
@@ -31,7 +31,7 @@ const router = createBrowserRouter([
       },
       {
         path:"/plaid",
-        element: <PlaidIntegration/>
+        element: <Plaid/>
       },
       {
         path:"/portfolio",
