@@ -51,7 +51,7 @@ async function analyzeFinancesFromData(transactionData) {
     4. SPECIFIC RECOMMENDATIONS: Provide 2-3 actionable money-saving tips
     5. BUDGET SUGGESTIONS: Suggest budget allocations based on spending patterns
 
-    Format your response as plain text with clear sections. Be specific, helpful, and encouraging. Use emojis to make it engaging but keep it professional.
+    Format your response as plain text with clear sections. Be specific, helpful, and encouraging. Use emojis to make it engaging but keep it professional. Don't make it too long. make it short yet concise. 
 
     Example format:
     📊 SPENDING OVERVIEW
