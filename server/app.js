@@ -27,7 +27,6 @@ const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 
 async function analyzeFinancesFromData(transactionData) {
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-    
     // Process transaction data for better analysis
     const processedData = transactionData.map(t => ({
         date: t.date,
@@ -74,17 +73,22 @@ async function analyzeFinancesFromData(transactionData) {
     return response.response.text().trim();
 }
 
+
 // AI endpoint
 app.post('/analyze_transactions', async (req, res) => {
     try {
         const { transactions } = req.body;
         if (!transactions || !Array.isArray(transactions)) {
             return res.status(400).json({ error: 'transactions array is required' });
+            return;
+            // console.log('error: transactions array is required')
         }
+ 
         const analysis = await analyzeFinancesFromData(transactions);
         res.json({ analysis });
+        // console.log(analysis)
     } catch (err) {
-        console.error('Error analyzing transactions:', err);
+        console.error('Error analyzing transactions:', err.message);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -198,7 +202,7 @@ app.post('/get_transactions', async (req, res) => {
             end_date: endDate,
             options: {
                 offset: 0,
-                count: 100 // Limit to 100 transactions
+                count: 100 
             }
         });
         

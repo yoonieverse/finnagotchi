@@ -384,7 +384,7 @@ export function Plaid() {
         transactionRef.setTransactions(response.data.transactions);
         console.log(`Fetched ${response.data.transactions.length} transactions`);
         // Automatically analyze transactions after fetching
-        analyzeTransactions(response.data.transactions);
+        // analyzeTransactions(response.data.transactions);
       } else {
         setTransactions([]);
         console.log('No transactions found');
@@ -434,6 +434,7 @@ export function Plaid() {
     setIsAuthenticated(false);
     setError('');
     setAnalysis('');
+    transactionRef.setTransactions([])
   };
 
   const { open, ready } = usePlaidLink({
