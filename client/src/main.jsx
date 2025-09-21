@@ -12,6 +12,9 @@ import { Home } from './pages/Home.jsx'
 import { SignUp } from './pages/Signup.jsx'
 import { Settings } from './pages/Settings.jsx'
 
+// Import CSS
+import './styles/main.css'
+
 const router = createBrowserRouter([
   {
     path:"/",

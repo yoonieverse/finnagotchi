@@ -7,14 +7,20 @@ import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 
 export default function Navbar({ isCollapsed, onToggle }) {
   const [loggedin, setLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
   const auth = getAuth();
   console.log(loggedin)
   const navigate = useNavigate();
     useEffect(() => {
       onAuthStateChanged(auth, (data) => {
         console.log(data);
-        if (data) setLoggedIn(true);
-        else if (!data) setLoggedIn(false);
+        if (data) {
+          setLoggedIn(true);
+          setUser(data);
+        } else {
+          setLoggedIn(false);
+          setUser(null);
+        }
       })
     }, []);
     const logout = () => {
@@ -35,6 +41,19 @@ export default function Navbar({ isCollapsed, onToggle }) {
         <>
           {/* Top: Logo */}
           <div className="logo">Finnagotchi</div> 
+          
+          {/* Google Account Section */}
+          {loggedin && user && (
+            <div className="google-account-section">
+              <div className="google-account-info">
+                <div className="google-icon">G</div>
+                <div className="google-details">
+                  <div className="google-email">{user.email}</div>
+                  <div className="google-label">Google Account</div>
+                </div>
+              </div>
+            </div>
+          )}
           
           {/* Center: Nav Links */}
           <ul className="nav-links">

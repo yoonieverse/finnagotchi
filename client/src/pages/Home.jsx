@@ -59,121 +59,51 @@ export function Home() {
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 p-6 flex justify-center">
-            <div className="w-full max-w-7xl">
-                {/* Header with Finnagotchi */}
-                <div className="flex justify-between items-start mb-8">
-                    <div className="flex items-center space-x-6">
-                        {/* Circular Progress Chart */}
-                        <div className="bg-white rounded-3xl p-8 shadow-xl">
-                            <div className="relative w-48 h-48">
-                                <PieChart width={192} height={192}>
-                                    <Pie
-                                        data={formattedBudget}
-                                        dataKey="value"
-                                        nameKey="name"
-                                        cx="50%"
-                                        cy="50%"
-                                        innerRadius={60}
-                                        outerRadius={80}
-                                        fill="#8884d8"
-                                    >
-                                        {formattedBudget.map((entry, index) => (
-                                            <Cell key={index} fill={COLORS[index % COLORS.length]} />
-                                        ))}
-                                    </Pie>
-                                </PieChart>
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <div className="text-center">
-                                        <div className="text-2xl font-bold text-blue-600">On Track</div>
-                                        <div className="text-sm text-gray-500">Budget Status</div>
-                                    </div>
-                                </div>
-                            </div>
+        <div className="page">
+            <div className="container-wide">
+                {/* Welcome Header */}
+                <div className="text-center mb-2xl">
+                    <div className="card" style={{maxWidth: '400px', margin: '0 auto'}}>
+                        <div className="text-5xl mb-md">
+                            <img 
+                                src="/src/assets/ani.gif" 
+                                alt="Finn the Octopus Animation"
+                                style={{width: '100px', height: '100px', objectFit: 'contain'}}
+                                onError={(e) => {
+                                    e.target.src = "https://media.giphy.com/media/3o7btPCcdNniyf0ArS/giphy.gif";
+                                }}
+                            />
                         </div>
-                    </div>
-
-                    {/* Finnagotchi Character */}
-                    <div className="text-center">
-                        <div className="bg-white rounded-3xl p-8 shadow-xl">
-                            <div className="text-6xl mb-4">🐙</div>
-                            <h2 className="text-2xl font-bold text-blue-600 mb-2">Finnagotchi</h2>
-                            <p className="text-gray-600">Good morning, {user?.first_name || 'User'}!</p>
-                        </div>
+                        <h1 className="text-3xl font-bold text-primary mb-sm">Finnagotchi</h1>
+                        <p className="text-lg text-gray-600">Good morning, {user?.first_name || 'User'}!</p>
                     </div>
                 </div>
 
-                {/* Main Content Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {/* Goals Section */}
-                    <div className="bg-white rounded-3xl p-8 shadow-xl">
-                        <h3 className="text-2xl font-bold text-gray-800 mb-6">Goals</h3>
-                        <div className="space-y-6">
-                            {goals.map((goal, index) => (
-                                <div key={index} className="space-y-2">
-                                    <div className="flex justify-between items-center">
-                                        <span className="font-semibold text-gray-700">{goal.name}</span>
-                                        <span className="text-sm text-gray-500">${goal.current.toLocaleString()} / ${goal.target.toLocaleString()}</span>
-                                    </div>
-                                    <div className="w-full bg-gray-200 rounded-full h-3">
-                                        <div 
-                                            className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-500"
-                                            style={{ width: `${goal.progress}%` }}
-                                        ></div>
-                                    </div>
-                                    <div className="text-right text-sm text-gray-500">{goal.progress}% complete</div>
-                                </div>
-                            ))}
-                        </div>
+                {/* Quick Stats Row */}
+                <div className="grid grid-4 gap-lg mb-2xl">
+                    <div className="card card-small text-center">
+                        <div className="text-3xl font-bold text-success mb-sm">$2,500</div>
+                        <div className="text-sm text-gray-500">This Month</div>
                     </div>
-
-                    {/* Log Section */}
-                    <div className="bg-white rounded-3xl p-8 shadow-xl">
-                        <h3 className="text-2xl font-bold text-gray-800 mb-6">Recent Transactions</h3>
-                        <div className="space-y-4">
-                            <div className="grid grid-cols-3 gap-4 text-sm font-semibold text-gray-500 border-b pb-2">
-                                <div>Date</div>
-                                <div>Amount</div>
-                                <div>Type</div>
-                            </div>
-                            {recentTransactions.map((tx, index) => (
-                                <div key={index} className="grid grid-cols-3 gap-4 text-sm py-2 hover:bg-gray-50 rounded-lg px-2">
-                                    <div className="text-gray-600">{new Date(tx.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
-                                    <div className={`font-semibold ${tx.amount > 0 ? 'text-red-600' : 'text-green-600'}`}>
-                                        {tx.amount > 0 ? '-' : '+'}${Math.abs(tx.amount).toFixed(2)}
-                                    </div>
-                                    <div className="text-gray-600">{tx.type}</div>
-                                </div>
-                            ))}
-                        </div>
+                    <div className="card card-small text-center">
+                        <div className="text-3xl font-bold text-primary mb-sm">85%</div>
+                        <div className="text-sm text-gray-500">On Track</div>
                     </div>
-
-                    {/* Portfolio Section */}
-                    <div className="bg-white rounded-3xl p-8 shadow-xl">
-                        <h3 className="text-2xl font-bold text-gray-800 mb-6">Portfolio</h3>
-                        <div className="space-y-4">
-                            {portfolioItems.map((item, index) => (
-                                <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                                    <div className="flex items-center space-x-3">
-                                        <div className="text-red-500 text-xl">❤️</div>
-                                        <div>
-                                            <div className="font-bold text-gray-800">{item.symbol}</div>
-                                            <div className="text-sm text-gray-500">{item.date}</div>
-                                        </div>
-                                    </div>
-                                    <div className="text-right">
-                                        <div className="font-bold text-gray-800">${item.value.toFixed(2)}</div>
-                                        <div className="text-sm text-green-600">{item.change}</div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                    <div className="card card-small text-center">
+                        <div className="text-3xl font-bold text-accent mb-sm">$1,200</div>
+                        <div className="text-sm text-gray-500">Saved</div>
                     </div>
+                    <div className="card card-small text-center">
+                        <div className="text-3xl font-bold text-warning mb-sm">12</div>
+                        <div className="text-sm text-gray-500">Goals</div>
+                    </div>
+                </div>
 
-                    {/* Budget Breakdown Chart */}
-                    <div className="bg-white rounded-3xl p-8 shadow-xl">
-                        <h3 className="text-2xl font-bold text-gray-800 mb-6">Budget Breakdown</h3>
-                        <div className="flex justify-center">
+                {/* Budget Overview Chart */}
+                <div className="text-center mb-2xl">
+                    <div className="card" style={{maxWidth: '500px', margin: '0 auto'}}>
+                        <h3 className="text-2xl font-bold text-gray-800 mb-lg">Budget Overview</h3>
+                        <div className="flex-center" style={{position: 'relative', width: '300px', height: '300px', margin: '0 auto'}}>
                             <PieChart width={300} height={300}>
                                 <Pie
                                     data={formattedBudget}
@@ -181,9 +111,9 @@ export function Home() {
                                     nameKey="name"
                                     cx="50%"
                                     cy="50%"
-                                    outerRadius={100}
+                                    innerRadius={70}
+                                    outerRadius={120}
                                     fill="#8884d8"
-                                    label={({ name, value }) => `${name}: ${((value / total) * 100).toFixed(0)}%`}
                                 >
                                     {formattedBudget.map((entry, index) => (
                                         <Cell key={index} fill={COLORS[index % COLORS.length]} />
@@ -191,6 +121,118 @@ export function Home() {
                                 </Pie>
                                 <Tooltip formatter={(value) => `${value}%`} />
                             </PieChart>
+                            <div className="flex-center" style={{position: 'absolute', inset: '0'}}>
+                                <div className="text-center">
+                                    <div className="text-2xl font-bold text-primary">On Track</div>
+                                    <div className="text-sm text-gray-500">Budget Status</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Goals Section - Horizontal Layout */}
+                <div className="mb-2xl">
+                    <h3 className="text-3xl font-bold text-gray-800 mb-xl text-center">Financial Goals</h3>
+                    <div className="grid grid-responsive gap-lg">
+                        {goals.map((goal, index) => (
+                            <div key={index} className="card hover:scale-105 transition">
+                                <div className="text-center mb-md">
+                                    <div className="text-3xl mb-md">
+                                        {index === 0 && '🛒'}
+                                        {index === 1 && '🏠'}
+                                        {index === 2 && '🚗'}
+                                        {index === 3 && '🏡'}
+                                        {index === 4 && '📈'}
+                                    </div>
+                                    <h4 className="font-bold text-gray-800 text-lg">{goal.name}</h4>
+                                </div>
+                                <div className="space-y-md">
+                                    <div className="text-center">
+                                        <div className="text-2xl font-bold text-primary">${goal.current.toLocaleString()}</div>
+                                        <div className="text-sm text-gray-500">of ${goal.target.toLocaleString()}</div>
+                                    </div>
+                                    <div className="progress-bar">
+                                        <div 
+                                            className="progress-fill"
+                                            style={{ width: `${goal.progress}%` }}
+                                        ></div>
+                                    </div>
+                                    <div className="text-center text-sm font-semibold text-gray-600">{goal.progress}% complete</div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Main Dashboard Grid - 3 columns */}
+                <div className="grid grid-3 gap-xl">
+                    {/* Recent Transactions - Wider */}
+                    <div className="card" style={{gridColumn: 'span 2'}}>
+                        <h3 className="text-2xl font-bold text-gray-800 mb-lg">Recent Transactions</h3>
+                        <div className="space-y-md">
+                            {recentTransactions.map((tx, index) => (
+                                <div key={index} className="flex-between p-md bg-gray-50 rounded-xl hover:bg-gray-100 transition">
+                                    <div className="flex gap-md">
+                                        <div className="icon icon-primary">
+                                            <span className="text-xl">
+                                                {tx.type === 'Income' && '💰'}
+                                                {tx.type === 'Groceries' && '🛒'}
+                                                {tx.type === 'Rent' && '🏠'}
+                                                {tx.type === 'Entertainment' && '🎮'}
+                                                {tx.type === 'Transportation' && '🚗'}
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <div className="font-semibold text-gray-800">{tx.name}</div>
+                                            <div className="text-sm text-gray-500">{new Date(tx.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} • {tx.type}</div>
+                                        </div>
+                                    </div>
+                                    <div className={`text-lg font-bold ${tx.amount > 0 ? 'text-error' : 'text-success'}`}>
+                                        {tx.amount > 0 ? '-' : '+'}${Math.abs(tx.amount).toFixed(2)}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Portfolio Section */}
+                    <div className="card">
+                        <h3 className="text-2xl font-bold text-gray-800 mb-lg">Portfolio</h3>
+                        <div className="space-y-md">
+                            {portfolioItems.map((item, index) => (
+                                <div key={index} className="p-md bg-gradient-card rounded-xl" style={{border: '1px solid var(--gray-200)'}}>
+                                    <div className="flex-between">
+                                        <div className="flex gap-md">
+                                            <div className="icon icon-sm icon-error">
+                                                <span className="text-lg">📈</span>
+                                            </div>
+                                            <div>
+                                                <div className="font-bold text-gray-800">{item.symbol}</div>
+                                                <div className="text-sm text-gray-500">{item.date}</div>
+                                            </div>
+                                        </div>
+                                        <div className="text-right">
+                                            <div className="font-bold text-gray-800">${item.value.toFixed(2)}</div>
+                                            <div className="text-sm text-success font-semibold">{item.change}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        
+                        {/* Additional Portfolio Stats */}
+                        <div className="mt-lg pt-lg" style={{borderTop: '1px solid var(--gray-200)'}}>
+                            <div className="grid grid-2 gap-md text-center">
+                                <div>
+                                    <div className="text-2xl font-bold text-success">+12.5%</div>
+                                    <div className="text-sm text-gray-500">YTD Return</div>
+                                </div>
+                                <div>
+                                    <div className="text-2xl font-bold text-primary">$2,140</div>
+                                    <div className="text-sm text-gray-500">Total Value</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
