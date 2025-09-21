@@ -2,13 +2,20 @@ import { getAuth } from 'firebase/auth';
 import { useState, useEffect, useContext } from 'react';
 import { PieChart, Pie, Cell, Tooltip } from 'recharts';
 import { TransactionContext } from '../contexts/transactionContext';
+import { BudgetContext } from '../contexts/budgetContext';
+
 
 export function Home() {
     const [user, setUser] = useState(null);
     const [budgetPref, setBudgetPref] = useState({ needs: 50, wants: 30, savings: 20 });
     const { transactions } = useContext(TransactionContext);
     const auth = getAuth();
+    const [quote, setQuote] = useState([`Hello, ${auth.currentUser?.displayName}! 🌊`])
+    const { budget } = useContext(BudgetContext);
+    const [rating, setRating] = useState(8);
     
+
+
     useEffect(() => {
         const getuser = async() => {
             const res = await fetch(`http://localhost:3333/user?uid=${auth.currentUser.uid}`, {
@@ -25,6 +32,69 @@ export function Home() {
         }
         getuser();
     },[])
+   
+    useEffect(() => {
+    async function fetchQuote() {
+      if(!budget) return;
+      try {
+        const res = await fetch("http://localhost:3333/quotes", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ transactions: budget }),
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch quotes");
+
+        const data = await res.json();
+        console.log(data)
+
+        if (Array.isArray(data.quotes) && data.quotes.length > 0) {
+          const random = data.quotes[Math.floor(Math.random() * data.quotes.length)];
+          console.log(random)
+          setQuote(random);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    if (budget) {
+      fetchQuote();
+    }
+  }, [budget]);
+
+  useEffect(() => {
+    console.log('hifwe')
+    console.log(budget)
+    async function fetchRating() {
+        
+      try {
+        const res = await fetch("http://localhost:3333/finnrating", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ transactions: budget }),
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch rating");
+
+         const data = await res.json();
+         console.log(data)
+
+
+          setRating(data.rating);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    if (budget) {
+      fetchRating();
+    }
+  }, [budget]);
 
     const formattedBudget = Object.entries(budgetPref).map(([key, value]) => ({
         name: key,
@@ -66,7 +136,7 @@ export function Home() {
                     <div className="card" style={{maxWidth: '450px', margin: '0 auto', position: 'relative'}}>
                         <div className="text-5xl mb-md" style={{position: 'relative'}}>
                             <img 
-                                src="/src/assets/image copy 3.png" 
+                                src={`/src/assets/image copy ${rating}.png`}
                                 alt="Finn the Octopus"
                                 style={{
                                     width: '180px', 
@@ -107,7 +177,7 @@ export function Home() {
                             WebkitTextFillColor: 'transparent',
                             backgroundClip: 'text'
                         }}></h1>
-                        <p className="text-lg text-gray-600 mb-md">Good morning, {user?.first_name || 'User'}! 🌊</p>
+                        <p className="text-lg text-gray-600 mb-md">{quote}</p>
                         
                         {/* Random shrimp 1 */}
                         <img 
