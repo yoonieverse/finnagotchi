@@ -1,15 +1,17 @@
 
 import React, { use, useEffect, useState } from "react";
 import "../styles/Navbar.css";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import logoutIcon from "../assets/logout.png";
+import tabButtonIcon from "../assets/tabButton.png";
 
 export default function Navbar({ isCollapsed, onToggle }) {
   const [loggedin, setLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const auth = getAuth();
+  const location = useLocation();
   console.log(loggedin)
   const navigate = useNavigate();
     useEffect(() => {
@@ -58,11 +60,36 @@ export default function Navbar({ isCollapsed, onToggle }) {
           
           {/* Center: Nav Links */}
           <ul className="nav-links">
-            <li><Link to="/home" >Home</Link></li>
-            <li><Link to="/log" >Log</Link></li>
-            <li><Link to="/budget" >Budget</Link></li>
-            <li><Link to="/portfolio" >Portfolio</Link></li>
-            <li><Link to="/plaid" >Plaid</Link></li>
+            <li className={location.pathname === '/home' ? 'active' : ''}>
+              <Link to="/home">
+                <img src={tabButtonIcon} alt="Home" className="tab-button-icon" />
+                <span className="tab-text">Home</span>
+              </Link>
+            </li>
+            <li className={location.pathname === '/log' ? 'active' : ''}>
+              <Link to="/log">
+                <img src={tabButtonIcon} alt="Log" className="tab-button-icon" />
+                <span className="tab-text">Log</span>
+              </Link>
+            </li>
+            <li className={location.pathname === '/budget' ? 'active' : ''}>
+              <Link to="/budget">
+                <img src={tabButtonIcon} alt="Budget" className="tab-button-icon" />
+                <span className="tab-text">Budget</span>
+              </Link>
+            </li>
+            <li className={location.pathname === '/portfolio' ? 'active' : ''}>
+              <Link to="/portfolio">
+                <img src={tabButtonIcon} alt="Portfolio" className="tab-button-icon" />
+                <span className="tab-text">Portfolio</span>
+              </Link>
+            </li>
+            <li className={location.pathname === '/plaid' ? 'active' : ''}>
+              <Link to="/plaid">
+                <img src={tabButtonIcon} alt="Plaid" className="tab-button-icon" />
+                <span className="tab-text">Plaid</span>
+              </Link>
+            </li>
           </ul>
 
           {/* Bottom: Login/Logout Button */}
