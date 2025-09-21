@@ -60,6 +60,11 @@ const TransactionTable = ({ transactions }) => {
     };
   };
 
+  // Helper function to determine if transaction is income
+  const isIncomeTransaction = (transaction) => {
+    return transaction.personal_finance_category?.primary === 'INCOME';
+  };
+
   // Sort transactions
   const sortedTransactions = [...transactions].sort((a, b) => {
     let aVal, bVal;
@@ -112,13 +117,13 @@ const TransactionTable = ({ transactions }) => {
     }
   };
 
-  // Calculate totals
+  // Calculate totals based on transaction categories
   const totalExpenses = transactions
-    .filter(t => t.amount > 0)
-    .reduce((sum, t) => sum + t.amount, 0);
+    .filter(t => !isIncomeTransaction(t) && t.personal_finance_category?.primary !== 'TRANSFER_IN')
+    .reduce((sum, t) => sum + Math.abs(t.amount), 0);
 
   const totalIncome = transactions
-    .filter(t => t.amount < 0)
+    .filter(t => isIncomeTransaction(t))
     .reduce((sum, t) => sum + Math.abs(t.amount), 0);
 
   const netAmount = totalIncome - totalExpenses;
@@ -263,6 +268,7 @@ const TransactionTable = ({ transactions }) => {
             <tbody className="divide-y divide-gray-100">
               {filteredTransactions.map((transaction, index) => {
                 const categoryInfo = getCategoryInfo(transaction.personal_finance_category?.primary || '');
+                const isIncome = isIncomeTransaction(transaction);
                 return (
                   <tr key={transaction.transaction_id || index} className="hover:bg-gray-50 transition-colors duration-150">
                     <td className="px-8 py-6 whitespace-nowrap text-sm text-gray-900 font-medium">
@@ -285,8 +291,8 @@ const TransactionTable = ({ transactions }) => {
                       </span>
                     </td>
                     <td className="px-8 py-6 whitespace-nowrap text-sm text-right">
-                      <span className={`font-bold text-lg ${transaction.amount > 0 ? 'text-red-600' : 'text-green-600'}`}>
-                        {transaction.amount > 0 ? '-' : '+'}{formatCurrency(transaction.amount)}
+                      <span className={`font-bold text-lg ${isIncome ? 'text-green-600' : 'text-red-600'}`}>
+                        {isIncome ? '+' : '-'}{formatCurrency(transaction.amount)}
                       </span>
                     </td>
                   </tr>

@@ -25,20 +25,20 @@ export function Log() {
                 </div>
                 <div className="card card-small text-center">
                   <div className="text-3xl font-bold text-error">
-                    -${transactions.filter(tx => tx.amount > 0).reduce((sum, tx) => sum + tx.amount, 0).toFixed(2)}
+                    -${transactions.filter(tx => tx.personal_finance_category?.primary !== 'INCOME' && tx.personal_finance_category?.primary !== 'TRANSFER_IN').reduce((sum, tx) => sum + Math.abs(tx.amount), 0).toFixed(2)}
                   </div>
                   <div className="text-gray-500">Total Expenses</div>
                 </div>
                 <div className="card card-small text-center">
                   <div className="text-3xl font-bold text-success">
-                    +${transactions.filter(tx => tx.amount < 0).reduce((sum, tx) => sum + Math.abs(tx.amount), 0).toFixed(2)}
+                    +${transactions.filter(tx => tx.personal_finance_category?.primary === 'INCOME').reduce((sum, tx) => sum + Math.abs(tx.amount), 0).toFixed(2)}
                   </div>
                   <div className="text-gray-500">Total Income</div>
                 </div>
                 <div className="card card-small text-center">
                   <div className="text-3xl font-bold text-accent">
-                    ${(transactions.filter(tx => tx.amount < 0).reduce((sum, tx) => sum + Math.abs(tx.amount), 0) - 
-                       transactions.filter(tx => tx.amount > 0).reduce((sum, tx) => sum + tx.amount, 0)).toFixed(2)}
+                    ${(transactions.filter(tx => tx.personal_finance_category?.primary === 'INCOME').reduce((sum, tx) => sum + Math.abs(tx.amount), 0) - 
+                       transactions.filter(tx => tx.personal_finance_category?.primary !== 'INCOME' && tx.personal_finance_category?.primary !== 'TRANSFER_IN').reduce((sum, tx) => sum + Math.abs(tx.amount), 0)).toFixed(2)}
                   </div>
                   <div className="text-gray-500">Net Amount</div>
                 </div>
@@ -54,9 +54,9 @@ export function Log() {
                     <div key={index} className="bg-gradient-card rounded-2xl p-lg hover:shadow-lg transition hover:scale-105" style={{border: '1px solid var(--gray-200)'}}>
                       <div className="flex-between mb-md">
                         <div className="flex gap-md">
-                          <div className={`icon ${tx.amount > 0 ? 'icon-error' : 'icon-success'}`}>
+                          <div className={`icon ${tx.personal_finance_category?.primary === 'INCOME' ? 'icon-success' : 'icon-error'}`}>
                             <span className="text-2xl">
-                              {tx.amount > 0 ? '💸' : '💰'}
+                              {tx.personal_finance_category?.primary === 'INCOME' ? '💰' : '💸'}
                             </span>
                           </div>
                           <div>
@@ -73,8 +73,8 @@ export function Log() {
                             </p>
                           </div>
                         </div>
-                        <div className={`text-2xl font-bold ${tx.amount > 0 ? 'text-error' : 'text-success'}`}>
-                          {tx.amount > 0 ? '-' : '+'}${Math.abs(tx.amount).toFixed(2)}
+                        <div className={`text-2xl font-bold ${tx.personal_finance_category?.primary === 'INCOME' ? 'text-success' : 'text-error'}`}>
+                          {tx.personal_finance_category?.primary === 'INCOME' ? '+' : '-'}${Math.abs(tx.amount).toFixed(2)}
                         </div>
                       </div>
                       
@@ -97,9 +97,9 @@ export function Log() {
                         <div className="flex-between text-sm">
                           <span className="text-gray-500">Status:</span>
                           <span className={`status-indicator ${
-                            tx.amount > 0 ? 'status-error' : 'status-success'
+                            tx.personal_finance_category?.primary === 'INCOME' ? 'status-success' : 'status-error'
                           }`}>
-                            {tx.amount > 0 ? 'Expense' : 'Income'}
+                            {tx.personal_finance_category?.primary === 'INCOME' ? 'Income' : 'Expense'}
                           </span>
                         </div>
                       </div>
