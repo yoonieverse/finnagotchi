@@ -138,6 +138,28 @@ export function Goals() {
         return Math.min((current / target) * 100, 100);
     };
 
+    const deleteGoal = (goalId) => {
+        if (window.confirm('Are you sure you want to delete this goal? This action cannot be undone.')) {
+            try {
+                // Get all goals from localStorage
+                const allGoals = JSON.parse(localStorage.getItem('savingsGoals') || '[]');
+                
+                // Filter out the goal to delete
+                const updatedGoals = allGoals.filter(goal => goal.id !== goalId);
+                
+                // Save updated goals to localStorage
+                localStorage.setItem('savingsGoals', JSON.stringify(updatedGoals));
+                
+                // Reload goals to update the UI
+                loadSavingsGoals();
+                
+                console.log('Goal deleted successfully');
+            } catch (error) {
+                console.error('Error deleting goal:', error);
+            }
+        }
+    };
+
     return (
         <div className="page">
             <div className="container-wide">
@@ -348,7 +370,7 @@ export function Goals() {
                                 return (
                                     <div key={goal.id} className="card hover:scale-105 transition">
                                         <div className="flex-between mb-lg">
-                                            <div>
+                                            <div className="flex-1">
                                                 <h3 className="text-2xl font-bold text-gray-800 mb-sm">{goal.name}</h3>
                                                 <p className="text-gray-600">Created {new Date(goal.createdAt).toLocaleDateString()}</p>
                                             </div>
@@ -359,6 +381,18 @@ export function Goals() {
                                                 <div className="text-sm text-gray-500">
                                                     of ${goal.targetAmount.toLocaleString()}
                                                 </div>
+                                            </div>
+                                            <div className="ml-lg">
+                                                <button
+                                                    onClick={() => deleteGoal(goal.id)}
+                                                    className="btn btn-error btn-sm"
+                                                    title="Delete this goal"
+                                                >
+                                                    <span className="flex gap-sm">
+                                                        <span>🗑️</span>
+                                                        <span>Delete</span>
+                                                    </span>
+                                                </button>
                                             </div>
                                         </div>
                                         
