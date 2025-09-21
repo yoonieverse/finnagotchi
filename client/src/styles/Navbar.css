@@ -1,10 +1,17 @@
 .navbar {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: flex-start;
   align-items: center;
-  padding: 12px 24px;
+  padding: 20px 12px;
   background-color: #ffffff;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+  width: 200px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
 }
 
 .logo {
@@ -16,9 +23,11 @@
 .nav-links {
   list-style: none;
   display: flex;
-  gap: 24px;
-  margin: 0;
+  flex-direction: column;
+  gap: 16px;
+  margin: 30px 0;
   padding: 0;
+  width: 100%;
 }
 
 .nav-links li {
@@ -26,6 +35,10 @@
   font-weight: 500;
   color: #555;
   transition: color 0.2s ease-in-out;
+  padding: 8px 12px;
+  border-radius: 6px;
+  text-align: center;
+  width: 100%;
 }
 
 .nav-links li:hover {
@@ -41,6 +54,8 @@
   font-weight: bold;
   cursor: pointer;
   transition: background 0.2s ease-in-out;
+  margin-top: 20px;
+  width: 100%;
 }
 
 .login-btn:hover {
@@ -112,4 +127,14 @@
 
 .animation-delay-3000 {
   animation-delay: 3s;
+}
+
+/* Main content adjustment for vertical navbar - only when navbar is present */
+.main-content {
+  margin-left: 200px;
+}
+
+/* Ensure signup page is not affected by navbar */
+.ocean-background {
+  margin-left: 0 !important;
 }

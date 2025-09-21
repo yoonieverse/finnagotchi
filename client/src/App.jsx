@@ -19,9 +19,11 @@ function App() {
   return (
     <div>
       {auth.currentUser && <Navbar />}
-      <TransactionContext.Provider value={{ transactions, setTransactions }}>
-        <Outlet />
-      </TransactionContext.Provider>
+      <div className={auth.currentUser ? "main-content" : ""}>
+        <TransactionContext.Provider value={{ transactions, setTransactions }}>
+          <Outlet />
+        </TransactionContext.Provider>
+      </div>
     </div>
   );
 }

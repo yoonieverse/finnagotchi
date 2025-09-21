@@ -26,7 +26,7 @@ export default function Navbar() {
     }
   return (
     <nav className="navbar">
-      {/* Left: Logo */}
+      {/* Top: Logo */}
       <div className="logo">Finnagotchi</div> 
       
       {/* Center: Nav Links */}
@@ -38,7 +38,7 @@ export default function Navbar() {
         <li><Link to="/plaid" >Plaid</Link></li>
       </ul>
 
-      {/* Right: Login Button */}
+      {/* Bottom: Login Button */}
       {!loggedin && <button className="login-btn">
         {<li><Link to="/signup" >Login</Link></li>}
       </button>}
