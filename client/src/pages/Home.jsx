@@ -13,7 +13,86 @@ export function Home() {
     const [quote, setQuote] = useState([`Hello, ${auth.currentUser?.displayName}! 🌊`])
     const { budget } = useContext(BudgetContext);
     const [rating, setRating] = useState(3);
-    
+    const [spendingDist, setSpendingDist] = useState(null)
+    const [spendingDistData, setSpendingDistData]=useState([
+        { name: 'wants', value: 30 },
+        { name: 'needs', value: 50},
+        { name: 'savings', value: 20}
+         ]);
+
+
+    useEffect(() => {
+        
+        if (!budget) return;
+        console.log(budget)
+
+        const sd = {
+            wants: 0,
+            needs: 0,
+            savings: 0
+        };
+
+        const needsCategory = [
+            "food_drink",
+            "medical",
+            "transportation",
+            "home_improvement",
+            "rent_utilities",
+            "government_and_non_profit"
+        ];
+
+        const wantsCategory = [ "entertainment", "personal_purchase", "travel"];
+
+        let wantsTotal = 0;
+        let needsTotal = 0;
+        let savingsTotal = 0;
+
+        // Wants
+         console.log(budget.wants)
+         console.log(budget.wants.subcategories)
+
+        for (let i = 0; i < wantsCategory.length; i++) {
+            const categoryArray = budget.wants.subcategories[wantsCategory[i]];
+            console.log(categoryArray)
+            for (let j = 0; j < categoryArray.length; j++) {
+                wantsTotal += categoryArray[j].ammount; // match JSON spelling
+            }
+        }
+
+        // Needs
+        for (let i = 0; i < needsCategory.length; i++) {
+            const categoryArray = budget.needs.subcategories[needsCategory[i]];
+            for (let j = 0; j < categoryArray.length; j++) {
+                needsTotal += categoryArray[j].ammount;
+            }
+        }
+
+        // Savings
+        for (let i = 0; i < budget.savings.purchases.length; i++) {
+            savingsTotal += budget.savings.purchases[i].ammount;
+        }
+
+        // Calculate fractions
+        const total = wantsTotal + needsTotal + savingsTotal;
+        if (total > 0) {
+            sd.wants = (wantsTotal / total)*100;
+            sd.needs = (needsTotal / total)*100;
+            sd.savings = (savingsTotal / total)*100
+        }
+
+        setSpendingDist(sd);
+        setSpendingDistData([
+        { name: 'wants', value: sd.wants },
+        { name: 'needs', value: sd.needs },
+        { name: 'savings', value: sd.savings }
+         ])
+        console.log(sd);
+
+
+
+
+
+    },[])
 
 
     useEffect(() => {
@@ -253,6 +332,25 @@ export function Home() {
                                 </Pie>
                                 <Tooltip formatter={(value) => `${value}%`} />
                             </PieChart>
+                            {budget&&<PieChart width={300} height={300}>
+                                <Pie
+                                    data={spendingDistData}
+                                    dataKey="value"
+                                    nameKey="name"
+                                    cx="50%"
+                                    cy="50%"
+                                    outerRadius={100}
+                                    fill="#8884d8"
+                                    label={(entry) => `${entry.name} ${(entry.value * 100).toFixed(0)}%`}
+                                >
+                                    {spendingDistData.map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                    ))}
+                                </Pie>
+                                <Tooltip
+                                    formatter={(value) => `${(value * 100).toFixed(1)}%`}
+                                />
+                            </PieChart>}
                             <div className="flex-center" style={{position: 'absolute', inset: '0'}}>
                                 <div className="text-center">
                                     <div className="text-2xl font-bold text-primary">On Track</div>
