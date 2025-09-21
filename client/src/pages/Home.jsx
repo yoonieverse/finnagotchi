@@ -63,21 +63,83 @@ export function Home() {
             <div className="container-wide">
                 {/* Welcome Header */}
                 <div className="text-center mb-2xl">
-                    <div className="card" style={{maxWidth: '400px', margin: '0 auto'}}>
-                        <div className="text-5xl mb-md">
+                    <div className="card" style={{maxWidth: '450px', margin: '0 auto', position: 'relative'}}>
+                        <div className="text-5xl mb-md" style={{position: 'relative'}}>
                             <img 
-                                src="/src/assets/ani.gif" 
-                                alt="Finn the Octopus Animation"
-                                style={{width: '100px', height: '100px', objectFit: 'contain'}}
+                                src="/src/assets/image copy 3.png" 
+                                alt="Finn the Octopus"
+                                style={{
+                                    width: '180px', 
+                                    height: '180px', 
+                                    objectFit: 'contain',
+                                    animation: 'float 3s ease-in-out infinite'
+                                }}
                                 onError={(e) => {
                                     e.target.src = "https://media.giphy.com/media/3o7btPCcdNniyf0ArS/giphy.gif";
                                 }}
                             />
+                            {/* Cute bubbles around Finn */}
+                            <div style={{
+                                position: 'absolute',
+                                top: '10px',
+                                right: '20px',
+                                fontSize: '20px',
+                                animation: 'bubble 2s ease-in-out infinite'
+                            }}>🫧</div>
+                            <div style={{
+                                position: 'absolute',
+                                bottom: '20px',
+                                left: '10px',
+                                fontSize: '16px',
+                                animation: 'bubble 2.5s ease-in-out infinite 0.5s'
+                            }}>🫧</div>
+                            <div style={{
+                                position: 'absolute',
+                                top: '30px',
+                                left: '30px',
+                                fontSize: '14px',
+                                animation: 'bubble 2.2s ease-in-out infinite 1s'
+                            }}>🫧</div>
                         </div>
-                        <h1 className="text-3xl font-bold text-primary mb-sm">Finnagotchi</h1>
-                        <p className="text-lg text-gray-600">Good morning, {user?.first_name || 'User'}!</p>
+                        <h1 className="text-4xl font-bold text-primary mb-sm" style={{
+                            background: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 50%, #0369a1 100%)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            backgroundClip: 'text'
+                        }}></h1>
+                        <p className="text-lg text-gray-600 mb-md">Good morning, {user?.first_name || 'User'}! 🌊</p>
+                        
+                        {/* Random shrimp 1 */}
+                        <img 
+                            src="/src/assets/shrimp.gif" 
+                            alt="Shrimp" 
+                            style={{
+                                position: 'absolute',
+                                top: '20px',
+                                right: '30px',
+                                width: '80px',
+                                height: '80px',
+                                animation: 'float 2s ease-in-out infinite',
+                                zIndex: 1
+                            }}
+                        />
                     </div>
                 </div>
+
+                {/* Random shrimp 2 */}
+                <img 
+                    src="/src/assets/shrimp.gif" 
+                    alt="Shrimp" 
+                    style={{
+                        position: 'absolute',
+                        top: '200px',
+                        left: '50px',
+                        width: '70px',
+                        height: '70px',
+                        animation: 'float 2.5s ease-in-out infinite 0.5s',
+                        zIndex: 1
+                    }}
+                />
 
                 {/* Quick Stats Row */}
                 <div className="grid grid-4 gap-lg mb-2xl">
@@ -132,6 +194,21 @@ export function Home() {
                 </div>
 
                 {/* Goals Section - Horizontal Layout */}
+                {/* Random shrimp 3 */}
+                <img 
+                    src="/src/assets/shrimp.gif" 
+                    alt="Shrimp" 
+                    style={{
+                        position: 'absolute',
+                        top: '400px',
+                        right: '100px',
+                        width: '100px',
+                        height: '100px',
+                        animation: 'float 3s ease-in-out infinite 1s',
+                        zIndex: 1
+                    }}
+                />
+
                 <div className="mb-2xl">
                     <h3 className="text-3xl font-bold text-gray-800 mb-xl text-center">Financial Goals</h3>
                     <div className="grid grid-responsive gap-lg">
