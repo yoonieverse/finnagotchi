@@ -17,21 +17,17 @@ export function Budget() {
         const category = transaction.personal_finance_category?.primary?.toLowerCase() || '';
         const detailedCategory = transaction.personal_finance_category?.detailed?.toLowerCase() || '';
             
-            // Determine if it's income, expense, or savings
+            // Determine if it's income or expense
             let itemCategory = 'expense'; // default
             let itemType = 'wants'; // default for expenses
         
-            // INCOME/SAVINGS - Handle income and transfers to savings
+            // INCOME - Handle income transactions
         if (category === 'income' || 
-            category === 'transfer_in' ||
             detailedCategory === 'income_wages' ||
-            detailedCategory === 'transfer_in_savings' ||
             name.includes('direct deposit') ||
-            name.includes('paycheck') ||
-                name.includes('transfer to savings') ||
-                name.includes('transfer from checking - student savings')) {
+            name.includes('paycheck')) {
                 itemCategory = 'income';
-                itemType = 'savings';
+                itemType = 'income'; // We'll track this separately
             } else {
         // NEEDS categories - Essential expenses only
         if (
@@ -107,6 +103,10 @@ export function Budget() {
             savings: {
                 budget_percent: 20,
                 purchases: []
+            },
+            income: {
+                total: 0,
+                purchases: []
             }
         };
 
@@ -120,8 +120,9 @@ export function Budget() {
 
             // Categorize based on item type and category
             if (item.category === 'income') {
-                // Income goes to savings
-                budgetJSON.savings.purchases.push(transactionItem);
+                // Income goes to income section
+                budgetJSON.income.purchases.push(transactionItem);
+                budgetJSON.income.total += item.amount;
             } else if (item.category === 'expense') {
                 if (item.type === 'needs') {
                     // For needs, we need to determine the subcategory
@@ -179,8 +180,6 @@ export function Budget() {
                     if (budgetJSON.wants.subcategories[subcategory]) {
                         budgetJSON.wants.subcategories[subcategory].push(transactionItem);
                     }
-                } else if (item.type === 'savings') {
-                    budgetJSON.savings.purchases.push(transactionItem);
                 }
             }
         });
@@ -233,8 +232,16 @@ export function Budget() {
     const calculateCategoryTotal = (category) => {
         if (!budgetData || !budgetData[category]) return 0;
         
+        if (category === 'income') {
+            return budgetData[category].total || 0;
+        }
+        
         if (category === 'savings') {
-            return budgetData[category].purchases.reduce((sum, item) => sum + item.ammount, 0);
+            // Calculate savings as income - wants - needs
+            const totalIncome = budgetData.income ? budgetData.income.total : 0;
+            const totalNeeds = calculateCategoryTotal('needs');
+            const totalWants = calculateCategoryTotal('wants');
+            return totalIncome - totalNeeds - totalWants;
         }
         
         return Object.values(budgetData[category].subcategories)
@@ -244,12 +251,17 @@ export function Budget() {
 
     const totalSaved = useMemo(() => {
         if (!budgetData) return 0;
-        return calculateCategoryTotal('savings') - calculateCategoryTotal('wants') - calculateCategoryTotal('needs');
+        return calculateCategoryTotal('savings');
     }, [budgetData]);
 
     const totalSpent = useMemo(() => {
         if (!budgetData) return 0;
         return calculateCategoryTotal('wants') + calculateCategoryTotal('needs');
+    }, [budgetData]);
+
+    const totalIncome = useMemo(() => {
+        if (!budgetData) return 0;
+        return calculateCategoryTotal('income');
     }, [budgetData]);
 
     const renderSubcategory = (subcategory, items) => {
@@ -336,7 +348,7 @@ export function Budget() {
                         </div>
                         <div>
                                             <h4 className="font-bold text-accent mb-sm">Savings (20%)</h4>
-                                            <p>Income and transfers to savings</p>
+                                            <p>Leftover money after needs and wants (Income - Needs - Wants)</p>
                                         </div>
                                     </div>
                         </div>
@@ -362,6 +374,11 @@ export function Budget() {
                         <div className="card bg-gradient-card">
                             <h2 className="page-title text-center mb-2xl">📈 Budget Overview</h2>
                             <div className="grid grid-5 gap-lg">
+                                <div className="card-small text-center bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200">
+                                    <div className="text-3xl mb-sm">💵</div>
+                                    <h3 className="font-bold text-emerald-800 mb-sm">Income</h3>
+                                    <p className="text-3xl font-bold text-emerald-600">${totalIncome.toFixed(2)}</p>
+                                </div>
                                 <div className="card-small text-center bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
                                     <div className="text-3xl mb-sm">🏠</div>
                                     <h3 className="font-bold text-blue-800 mb-sm">Needs (50%)</h3>
@@ -382,12 +399,44 @@ export function Budget() {
                                     <h3 className="font-bold text-gray-800 mb-sm">Total Saved</h3>
                                     <p className="text-3xl font-bold text-gray-600">${totalSaved.toFixed(2)}</p>
                                 </div>
-                                <div className="card-small text-center bg-gradient-to-br from-red-50 to-red-100 border-red-200">
-                                    <div className="text-3xl mb-sm">💸</div>
-                                    <h3 className="font-bold text-red-800 mb-sm">Total Spent</h3>
-                                    <p className="text-3xl font-bold text-red-600">${totalSpent.toFixed(2)}</p>
-                        </div>
                             </div>
+                        </div>
+                        
+                        {/* Income Section */}
+                        <div className="card border-l-4 border-emerald-400">
+                            <div className="flex-between mb-xl">
+                                <div>
+                                    <h2 className="text-3xl font-bold text-emerald-800 mb-sm">
+                                        💵 Income
+                                    </h2>
+                                    <p className="text-gray-600">Total income from all sources</p>
+                                </div>
+                                <div className="text-right">
+                                    <div className="text-4xl font-bold text-emerald-600">
+                                        ${totalIncome.toFixed(2)}
+                                    </div>
+                                </div>
+                            </div>
+                            {budgetData.income && budgetData.income.purchases.length > 0 ? (
+                                <div className="space-y-sm">
+                                    {budgetData.income.purchases.map((item, index) => (
+                                        <div key={index} className="flex-between p-lg bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-xl">
+                                            <div className="flex-1">
+                                                <span className="font-bold text-gray-800">{item.name}</span>
+                                                <span className="text-gray-500 ml-md text-sm">{item.date}</span>
+                                            </div>
+                                            <div className="font-bold text-emerald-600 text-xl">
+                                                +${item.ammount.toFixed(2)}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center p-3xl text-gray-500">
+                                    <div className="text-4xl mb-md">💼</div>
+                                    <p className="text-lg">No income transactions found</p>
+                                </div>
+                            )}
                         </div>
 
                         {/* Needs Section */}
@@ -441,63 +490,42 @@ export function Budget() {
                                     <h2 className="text-3xl font-bold text-green-800 mb-sm">
                                         💰 Savings (20%)
                                     </h2>
-                                    <p className="text-gray-600">Income and money set aside for the future</p>
+                                    <p className="text-gray-600">Money left over after needs and wants (${totalIncome.toFixed(2)} - ${calculateCategoryTotal('needs').toFixed(2)} - ${calculateCategoryTotal('wants').toFixed(2)})</p>
                                             </div>
                                 <div className="text-right">
-                                    <div className="text-4xl font-bold text-green-600">
-                                        ${calculateCategoryTotal('savings').toFixed(2)}
+                                    <div className={`text-4xl font-bold ${totalSaved >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                        {totalSaved >= 0 ? '+' : ''}${totalSaved.toFixed(2)}
                                     </div>
                                 </div>
                     </div>
-                            {budgetData.savings.purchases.length > 0 ? (
-                                <div className="space-y-sm">
-                                    {budgetData.savings.purchases.map((item, index) => (
-                                        <div key={index} className="flex-between p-lg bg-gradient-to-r from-green-50 to-green-100 rounded-xl">
-                                            <div className="flex-1">
-                                                <span className="font-bold text-gray-800">{item.name}</span>
-                                                <span className="text-gray-500 ml-md text-sm">{item.date}</span>
-                                            </div>
-                                            <div className="font-bold text-success text-xl">
-                                                ${item.ammount.toFixed(2)}
-                                            </div>
+
+                            <div className="text-center p-3xl">
+                                {totalSaved >= 0 ? (
+                                    <>
+                                        <div className="text-6xl mb-md">🎉</div>
+                                        <h3 className="text-2xl font-bold text-green-600 mb-md">Great job!</h3>
+                                        <p className="text-gray-600 text-lg mb-lg">
+                                            You have ${totalSaved.toFixed(2)} left over for savings after covering your needs and wants.
+                                        </p>
+                                        <div className="status-indicator status-success">
+                                            Savings Rate: {totalIncome > 0 ? ((totalSaved / totalIncome) * 100).toFixed(1) : 0}%
                                         </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="text-center p-3xl text-gray-500">
-                                    <div className="text-4xl mb-md">💸</div>
-                                    <p className="text-lg">No income/savings transactions found</p>
-                                </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className="text-6xl mb-md">⚠️</div>
+                                        <h3 className="text-2xl font-bold text-red-600 mb-md">Budget Deficit</h3>
+                                        <p className="text-gray-600 text-lg mb-lg">
+                                            You're spending ${Math.abs(totalSaved).toFixed(2)} more than your income. Consider reducing wants or increasing income.
+                                        </p>
+                                        <div className="status-indicator status-error">
+                                            Overspending by {totalIncome > 0 ? ((Math.abs(totalSaved) / totalIncome) * 100).toFixed(1) : 0}%
+                                        </div>
+                                    </>
                             )}
+                        </div>
                     </div>
 
-                        {/* Development Tools */}
-                        <div className="grid grid-2 gap-lg">
-                            <details className="card">
-                                <summary className="font-bold text-gray-800 cursor-pointer mb-lg flex items-center gap-sm">
-                                    🔧 View Raw Budget JSON
-                                </summary>
-                                <div className="mt-lg">
-                                    <pre className="text-xs overflow-x-auto bg-gray-50 p-lg rounded-lg max-h-96">
-                                        {JSON.stringify(budgetData, null, 2)}
-                        </pre>
-                                </div>
-                    </details>
-
-                            <details className="card">
-                                <summary className="font-bold text-gray-800 cursor-pointer mb-lg flex items-center gap-sm">
-                                    📊 View Raw Transactions JSON
-                                </summary>
-                                <div className="mt-lg">
-                                    <div className="status-indicator status-info mb-md">
-                                Total transactions: {transactions ? transactions.length : 0}
-                            </div>
-                                    <pre className="text-xs overflow-x-auto bg-gray-50 p-lg rounded-lg max-h-96">
-                                {JSON.stringify(transactions, null, 2)}
-                            </pre>
-                        </div>
-                    </details>
-                        </div>
                 </div>
             )}
           </div>

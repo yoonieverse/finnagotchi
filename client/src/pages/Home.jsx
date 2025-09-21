@@ -1,6 +1,6 @@
 import { getAuth } from 'firebase/auth';
 import { useState, useEffect, useContext } from 'react';
-import { PieChart, Pie, Cell, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, Label, ResponsiveContainer } from 'recharts';
 import { TransactionContext } from '../contexts/transactionContext';
 import { BudgetContext } from '../contexts/budgetContext';
 
@@ -18,7 +18,34 @@ export function Home() {
         { name: 'wants', value: 30 },
         { name: 'needs', value: 50},
         { name: 'savings', value: 20}
-         ]);
+    ]);
+    const [savingsGoals, setSavingsGoals] = useState([]);
+
+    // Load savings goals from localStorage
+    const loadSavingsGoals = () => {
+        try {
+            const storedGoals = localStorage.getItem('savingsGoals');
+            if (storedGoals) {
+                const goals = JSON.parse(storedGoals);
+                // Sort by createdAt (newest first) and take only first 3
+                goals.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                setSavingsGoals(goals.slice(0, 3));
+            } else {
+                setSavingsGoals([]);
+            }
+        } catch (error) {
+            console.error("Error loading savings goals:", error);
+            setSavingsGoals([]);
+        }
+    };
+
+    useEffect(() => {
+        loadSavingsGoals();
+    }, []);
+
+    const getProgressPercentage = (current, target) => {
+        return Math.min((current / target) * 100, 100);
+    };
 
 
     useEffect(() => {
@@ -46,6 +73,7 @@ export function Home() {
         let wantsTotal = 0;
         let needsTotal = 0;
         let savingsTotal = 0;
+        let incomeTotal = 0;
 
         // Wants
          console.log(budget.wants)
@@ -67,17 +95,20 @@ export function Home() {
             }
         }
 
-        // Savings
-        for (let i = 0; i < budget.savings.purchases.length; i++) {
-            savingsTotal += budget.savings.purchases[i].ammount;
+        // Income
+        for (let i = 0; i < budget.income.purchases.length; i++) {
+            incomeTotal += budget.income.purchases[i].ammount;
         }
+
+        savingsTotal = incomeTotal - (wantsTotal + needsTotal);
+
 
         // Calculate fractions
         const total = wantsTotal + needsTotal + savingsTotal;
         if (total > 0) {
-            sd.wants = (wantsTotal / total)*100;
-            sd.needs = (needsTotal / total)*100;
-            sd.savings = (savingsTotal / total)*100
+            sd.wants = (wantsTotal / total);
+            sd.needs = (needsTotal / total);
+            sd.savings = (savingsTotal / total);
         }
 
         setSpendingDist(sd);
@@ -250,7 +281,7 @@ export function Home() {
                             WebkitBackgroundClip: 'text',
                             WebkitTextFillColor: 'transparent',
                             backgroundClip: 'text'
-                        }}>Finnagotchi</h1>
+                        }}>I'm Finn!</h1>
                         <p className="text-lg text-gray-600 mb-md">{quote}</p>
                         
                         {/* Random shrimp 1 */}
@@ -271,29 +302,88 @@ export function Home() {
 
                     {/* Budget Overview Chart */}
                     <div className="card text-center">
-                        <h3 className="text-2xl font-bold text-gray-800 mb-lg">Budget Overview</h3>
-                        <div className="flex-center" style={{position: 'relative', width: '300px', height: '300px', margin: '0 auto'}}>
-                            <PieChart width={300} height={300}>
+                        <h3 className="text-2xl font-bold text-gray-800 mb-lg">
+                            {budget ? 'Spending Analysis' : 'Recommended Budget'}
+                        </h3>
+                        <div className="flex-center" style={{position: 'relative', width: '400px', height: '400px', margin: '0 auto'}}>
+                            <PieChart width={400} height={400}>
                                 <Pie
-                                    data={formattedBudget}
+                                    data={budget ? spendingDistData : formattedBudget}
                                     dataKey="value"
                                     nameKey="name"
                                     cx="50%"
                                     cy="50%"
-                                    innerRadius={70}
-                                    outerRadius={120}
+                                    innerRadius={80}
+                                    outerRadius={140}
                                     fill="#8884d8"
+                                    label={({ name, value, cx, cy, midAngle, innerRadius, outerRadius }) => {
+                                        const percentage = budget ? `${(value * 100).toFixed(1)}%` : `${value}%`;
+                                        const categoryNames = {
+                                            'wants': 'Wants',
+                                            'needs': 'Needs', 
+                                            'savings': 'Savings'
+                                        };
+                                        
+                                        const RADIAN = Math.PI / 180;
+                                        const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+                                        const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                                        const y = cy + radius * Math.sin(-midAngle * RADIAN);
+                                        
+                                        return (
+                                            <text 
+                                                x={x} 
+                                                y={y} 
+                                                fill="white" 
+                                                textAnchor={x > cx ? 'start' : 'end'} 
+                                                dominantBaseline="central"
+                                                fontSize="12"
+                                                fontWeight="bold"
+                                                stroke="black"
+                                                strokeWidth="0.5"
+                                            >
+                                                {`${categoryNames[name] || name}: ${percentage}`}
+                                            </text>
+                                        );
+                                    }}
+                                    labelLine={false}
                                 >
-                                    {formattedBudget.map((entry, index) => (
+                                    {(budget ? spendingDistData : formattedBudget).map((entry, index) => (
                                         <Cell key={index} fill={COLORS[index % COLORS.length]} />
                                     ))}
                                 </Pie>
-                                <Tooltip formatter={(value) => `${value}%`} />
+                                <Tooltip 
+                                    formatter={(value, name) => {
+                                        const percentage = budget ? `${(value * 100).toFixed(1)}%` : `${value}%`;
+                                        const categoryInfo = {
+                                            'wants': '🎯 Wants - Discretionary spending like entertainment, dining out, and shopping',
+                                            'needs': '🏠 Needs - Essential expenses like rent, groceries, and utilities', 
+                                            'savings': '💰 Savings - Money set aside for future goals and emergencies'
+                                        };
+                                        return [percentage, categoryInfo[name] || name];
+                                    }}
+                                    labelFormatter={(name) => {
+                                        const categoryNames = {
+                                            'wants': 'Wants',
+                                            'needs': 'Needs', 
+                                            'savings': 'Savings'
+                                        };
+                                        return categoryNames[name] || name;
+                                    }}
+                                />
+                                <Label 
+                                    value={budget ? "📊 Plaid Data" : "📋 Recommended"} 
+                                    position="center" 
+                                    style={{ 
+                                        fontSize: '14px', 
+                                        fontWeight: 'bold', 
+                                        fill: '#374151',
+                                        textAnchor: 'middle'
+                                    }} 
+                                />
                             </PieChart>
                             <div className="flex-center" style={{position: 'absolute', inset: '0'}}>
-                                <div className="text-center">
-                                    <div className="text-2xl font-bold text-primary">On Track</div>
-                                    <div className="text-sm text-gray-500">Budget Status</div>
+                                <div className="text-center" style={{padding: '20px'}}>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -315,75 +405,6 @@ export function Home() {
                     }}
                 />
 
-                {/* Quick Stats Row */}
-                <div className="grid grid-4 gap-lg mb-2xl">
-                    <div className="card card-small text-center">
-                        <div className="text-3xl font-bold text-success mb-sm">$2,500</div>
-                        <div className="text-sm text-gray-500">This Month</div>
-                    </div>
-                    <div className="card card-small text-center">
-                        <div className="text-3xl font-bold text-primary mb-sm">85%</div>
-                        <div className="text-sm text-gray-500">On Track</div>
-                    </div>
-                    <div className="card card-small text-center">
-                        <div className="text-3xl font-bold text-accent mb-sm">$1,200</div>
-                        <div className="text-sm text-gray-500">Saved</div>
-                    </div>
-                    <div className="card card-small text-center">
-                        <div className="text-3xl font-bold text-warning mb-sm">0</div>
-                        <div className="text-sm text-gray-500">Goals</div>
-                    </div>
-                </div>
-                {/* Budget Overview Chart */}
-                <div className="text-center mb-2xl">
-                    <div className="card" style={{maxWidth: '500px', margin: '0 auto'}}>
-                        <h3 className="text-2xl font-bold text-gray-800 mb-lg">Budget Overview</h3>
-                        <div className="flex-center" style={{position: 'relative', width: '300px', height: '300px', margin: '0 auto'}}>
-                            <PieChart width={300} height={300}>
-                                <Pie
-                                    data={formattedBudget}
-                                    dataKey="value"
-                                    nameKey="name"
-                                    cx="50%"
-                                    cy="50%"
-                                    innerRadius={70}
-                                    outerRadius={120}
-                                    fill="#8884d8"
-                                >
-                                    {formattedBudget.map((entry, index) => (
-                                        <Cell key={index} fill={COLORS[index % COLORS.length]} />
-                                    ))}
-                                </Pie>
-                                <Tooltip formatter={(value) => `${value}%`} />
-                            </PieChart>
-                            {budget&&<PieChart width={300} height={300}>
-                                <Pie
-                                    data={spendingDistData}
-                                    dataKey="value"
-                                    nameKey="name"
-                                    cx="50%"
-                                    cy="50%"
-                                    outerRadius={100}
-                                    fill="#8884d8"
-                                    label={(entry) => `${entry.name} ${(entry.value * 100).toFixed(0)}%`}
-                                >
-                                    {spendingDistData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                    ))}
-                                </Pie>
-                                <Tooltip
-                                    formatter={(value) => `${(value * 100).toFixed(1)}%`}
-                                />
-                            </PieChart>}
-                            <div className="flex-center" style={{position: 'absolute', inset: '0'}}>
-                                <div className="text-center">
-                                    <div className="text-2xl font-bold text-primary">On Track</div>
-                                    <div className="text-sm text-gray-500">Budget Status</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 {/* Goals Section - Horizontal Layout */}
                 {/* Random shrimp 3 */}
@@ -392,8 +413,8 @@ export function Home() {
                     alt="Shrimp" 
                     style={{
                         position: 'absolute',
-                        top: '400px',
-                        right: '100px',
+                        top: '700px',
+                        right: '150px',
                         width: '100px',
                         height: '100px',
                         animation: 'float 3s ease-in-out infinite 1s',
@@ -401,24 +422,10 @@ export function Home() {
                     }}
                 />
 
-                {/* Financial Goals Section - Reserved Space */}
+                {/* Recent Transactions Section */}
                 <div className="mb-2xl">
-                    <h3 className="text-3xl font-bold text-gray-800 mb-xl text-center">Financial Goals</h3>
-                    <div className="card text-center p-3xl">
-                        <div className="text-6xl mb-lg">🎯</div>
-                        <h4 className="text-2xl font-bold text-gray-600 mb-md">Goals Coming Soon</h4>
-                        <p className="text-lg text-gray-500 mb-lg">This space is reserved for future financial goal tracking features</p>
-                        <div className="status-indicator status-info">
-                            💡 Goals functionality will be implemented in future updates
-                        </div>
-                    </div>
-                </div>
-
-                {/* Main Dashboard Grid - 3 columns */}
-                <div className="grid grid-3 gap-xl">
-                    {/* Recent Transactions - Wider */}
-                    <div className="card" style={{gridColumn: 'span 2'}}>
-                        <h3 className="text-2xl font-bold text-gray-800 mb-lg">Recent Transactions</h3>
+                    <h3 className="text-3xl font-bold text-gray-800 mb-xl text-center">Recent Transactions</h3>
+                    <div className="card">
                         <div className="space-y-md">
                             {recentTransactions.map((tx, index) => (
                                 <div key={index} className="flex-between p-md bg-gray-50 rounded-xl hover:bg-gray-100 transition">
@@ -430,6 +437,7 @@ export function Home() {
                                                 {tx.type === 'Rent' && '🏠'}
                                                 {tx.type === 'Entertainment' && '🎮'}
                                                 {tx.type === 'Transportation' && '🚗'}
+                                                {!['Income', 'Groceries', 'Rent', 'Entertainment', 'Transportation'].includes(tx.type) && '💳'}
                                             </span>
                                         </div>
                                         <div>
@@ -437,54 +445,76 @@ export function Home() {
                                             <div className="text-sm text-gray-500">{new Date(tx.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} • {tx.type}</div>
                                         </div>
                                     </div>
-                                    <div className={`text-lg font-bold ${tx.amount > 0 ? 'text-error' : 'text-success'}`}>
-                                        {tx.amount > 0 ? '-' : '+'}${Math.abs(tx.amount).toFixed(2)}
+                                    <div className={`text-lg font-bold ${tx.amount > 0 ? 'text-success' : 'text-error'}`}>
+                                        {tx.amount > 0 ? '+' : ''}${tx.amount.toFixed(2)}
                                     </div>
                                 </div>
                             ))}
-                        </div>
-                    </div>
-
-                    {/* Portfolio Section */}
-                    <div className="card">
-                        <h3 className="text-2xl font-bold text-gray-800 mb-lg">Portfolio</h3>
-                        <div className="space-y-md">
-                            {portfolioItems.map((item, index) => (
-                                <div key={index} className="p-md bg-gradient-card rounded-xl" style={{border: '1px solid var(--gray-200)'}}>
-                                    <div className="flex-between">
-                                        <div className="flex gap-md">
-                                            <div className="icon icon-sm icon-error">
-                                                <span className="text-lg">📈</span>
-                                            </div>
-                                            <div>
-                                                <div className="font-bold text-gray-800">{item.symbol}</div>
-                                                <div className="text-sm text-gray-500">{item.date}</div>
-                                            </div>
-                                        </div>
-                                        <div className="text-right">
-                                            <div className="font-bold text-gray-800">${item.value.toFixed(2)}</div>
-                                            <div className="text-sm text-success font-semibold">{item.change}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                        
-                        {/* Additional Portfolio Stats */}
-                        <div className="mt-lg pt-lg" style={{borderTop: '1px solid var(--gray-200)'}}>
-                            <div className="grid grid-2 gap-md text-center">
-                                <div>
-                                    <div className="text-2xl font-bold text-success">+12.5%</div>
-                                    <div className="text-sm text-gray-500">YTD Return</div>
-                                </div>
-                                <div>
-                                    <div className="text-2xl font-bold text-primary">$2,140</div>
-                                    <div className="text-sm text-gray-500">Total Value</div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
+
+                {/* Financial Goals Section */}
+                <div className="mb-2xl">
+                    <h3 className="text-3xl font-bold text-gray-800 mb-xl text-center">Financial Goals</h3>
+                    {savingsGoals.length > 0 ? (
+                        <div className="grid grid-responsive gap-lg">
+                            {savingsGoals.map((goal) => {
+                                const progress = getProgressPercentage(goal.currentAmount || 0, goal.targetAmount);
+                                const isComplete = progress >= 100;
+                                
+                                return (
+                                    <div key={goal.id} className="card hover:scale-105 transition">
+                                        <div className="flex-between mb-lg">
+                                            <div className="flex-1">
+                                                <h4 className="text-xl font-bold text-gray-800 mb-sm">{goal.name}</h4>
+                                                <p className="text-sm text-gray-600">Created {new Date(goal.createdAt).toLocaleDateString()}</p>
+                                            </div>
+                                            <div className="text-right">
+                                                <div className={`text-2xl font-bold ${isComplete ? 'text-success' : 'text-primary'}`}>
+                                                    ${(goal.currentAmount || 0).toLocaleString()}
+                                                </div>
+                                                <div className="text-xs text-gray-500">
+                                                    of ${goal.targetAmount.toLocaleString()}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        {/* Progress Bar */}
+                                        <div className="mb-md">
+                                            <div className="progress-bar">
+                                                <div 
+                                                    className={`progress-fill ${isComplete ? 'bg-success' : 'bg-primary'}`}
+                                                    style={{ width: `${progress}%` }}
+                                                ></div>
+                                            </div>
+                                            <div className="flex-between mt-sm">
+                                                <span className="text-xs font-semibold text-gray-600">
+                                                    {progress.toFixed(1)}% complete
+                                                </span>
+                                                {isComplete && (
+                                                    <span className="text-xs text-success font-bold">
+                                                        🎉 Achieved!
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <div className="card text-center p-3xl">
+                            <div className="text-6xl mb-lg">🎯</div>
+                            <h4 className="text-2xl font-bold text-gray-600 mb-md">No Goals Yet</h4>
+                            <p className="text-lg text-gray-500 mb-lg">Create your first savings goal to start tracking your financial progress</p>
+                            <div className="status-indicator status-info">
+                                💡 Visit the Goals page to create your first goal
+                            </div>
+                        </div>
+                    )}
+                </div>
+
             </div>
         </div>
     );
