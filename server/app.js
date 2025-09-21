@@ -93,6 +93,80 @@ app.post('/analyze_transactions', async (req, res) => {
     }
 });
 
+app.post("/quotes", async (req, res) => {
+  try {
+    const { transactions } = req.body;
+
+    if (!transactions || !Array.isArray(transactions)) {
+      return res.status(400).json({ error: "transactions array is required" });
+    }
+
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+    const prompt = `
+      You are a financial advisor. You are given a list of categorized transactions with a budget ratio between wants, needs and savings.:
+      ${JSON.stringify(transactions, null, 2)}
+
+      Based on these, generate 10 short phrases (each a critique or advice).
+      - Keep them clear and concise
+      - Output them as a numbered list, no explanations, no extra text
+      - vibes of a bubbly fish named finn
+    `;
+
+    const result = await model.generateContent(prompt);
+    const text = result.response.text();
+
+    // Split into array of phrases (remove numbering if needed)
+    const phrases = text
+      .split("\n")
+      .map(line => line.replace(/^\d+\.\s*/, "").trim())
+      .filter(line => line.length > 0);
+
+    res.json({ quotes: phrases.slice(0, 10) });
+    
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+});
+
+app.post("/finnrating", async (req, res) => {
+  try {
+    const { transactions } = req.body;
+
+    if (!transactions || !Array.isArray(transactions)) {
+      return res.status(400).json({ error: "transactions array is required" });
+    }
+
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+    const prompt = `
+      You are a financial advisor. You are given a list of categorized transactions with a budget ratio between wants, needs and savings. 
+      Given these categorized transactions:
+      ${JSON.stringify(transactions, null, 2)}
+
+      Rate the user's overall financial health on a scale from 1 to 5:
+      - 1 = worst
+      - 5 = best
+
+      Only output the single number (1, 2, 3, 4, or 5). 
+      Do not include any other characters or text.
+    `;
+
+    const result = await model.generateContent(prompt);
+    let rating = result.response.text().trim();
+
+    // Ensure it’s strictly 1-4
+    if (!["1", "2", "3", "4", "5"].includes(rating)) {
+      return res.status(500).json({ error: "Invalid response from model" });
+    }
+
+    res.send(rating);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+});
 
 
 // Initialize Firebase Admin
