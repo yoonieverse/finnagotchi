@@ -326,7 +326,7 @@ export function Budget() {
                                 <summary className="font-medium text-primary">📋 Categorization Rules</summary>
                                 <div className="mt-md p-lg bg-gradient-light rounded-xl">
                                     <div className="grid grid-3 gap-md text-sm">
-                                        <div>
+                        <div>
                                             <h4 className="font-bold text-success mb-sm">Needs (50%)</h4>
                                             <p>Groceries, medical, utilities, rent, insurance, basic transportation</p>
                         </div>

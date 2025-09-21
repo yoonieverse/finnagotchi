@@ -131,9 +131,10 @@ export function Home() {
     return (
         <div className="page">
             <div className="container-wide">
-                {/* Welcome Header */}
-                <div className="text-center mb-2xl">
-                    <div className="card" style={{maxWidth: '450px', margin: '0 auto', position: 'relative'}}>
+                {/* Finn and Budget Overview - Side by Side */}
+                <div className="grid grid-2 gap-2xl mb-2xl">
+                    {/* Finn Character */}
+                    <div className="card text-center" style={{position: 'relative'}}>
                         <div className="text-5xl mb-md" style={{position: 'relative'}}>
                             <img 
                                 src={`/src/assets/image copy ${rating}.png`}
@@ -176,7 +177,7 @@ export function Home() {
                             WebkitBackgroundClip: 'text',
                             WebkitTextFillColor: 'transparent',
                             backgroundClip: 'text'
-                        }}></h1>
+                        }}>Finnagotchi</h1>
                         <p className="text-lg text-gray-600 mb-md">{quote}</p>
                         
                         {/* Random shrimp 1 */}
@@ -193,6 +194,36 @@ export function Home() {
                                 zIndex: 1
                             }}
                         />
+                    </div>
+
+                    {/* Budget Overview Chart */}
+                    <div className="card text-center">
+                        <h3 className="text-2xl font-bold text-gray-800 mb-lg">Budget Overview</h3>
+                        <div className="flex-center" style={{position: 'relative', width: '300px', height: '300px', margin: '0 auto'}}>
+                            <PieChart width={300} height={300}>
+                                <Pie
+                                    data={formattedBudget}
+                                    dataKey="value"
+                                    nameKey="name"
+                                    cx="50%"
+                                    cy="50%"
+                                    innerRadius={70}
+                                    outerRadius={120}
+                                    fill="#8884d8"
+                                >
+                                    {formattedBudget.map((entry, index) => (
+                                        <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                                    ))}
+                                </Pie>
+                                <Tooltip formatter={(value) => `${value}%`} />
+                            </PieChart>
+                            <div className="flex-center" style={{position: 'absolute', inset: '0'}}>
+                                <div className="text-center">
+                                    <div className="text-2xl font-bold text-primary">On Track</div>
+                                    <div className="text-sm text-gray-500">Budget Status</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -228,38 +259,6 @@ export function Home() {
                     <div className="card card-small text-center">
                         <div className="text-3xl font-bold text-warning mb-sm">12</div>
                         <div className="text-sm text-gray-500">Goals</div>
-                    </div>
-                </div>
-
-                {/* Budget Overview Chart */}
-                <div className="text-center mb-2xl">
-                    <div className="card" style={{maxWidth: '500px', margin: '0 auto'}}>
-                        <h3 className="text-2xl font-bold text-gray-800 mb-lg">Budget Overview</h3>
-                        <div className="flex-center" style={{position: 'relative', width: '300px', height: '300px', margin: '0 auto'}}>
-                            <PieChart width={300} height={300}>
-                                <Pie
-                                    data={formattedBudget}
-                                    dataKey="value"
-                                    nameKey="name"
-                                    cx="50%"
-                                    cy="50%"
-                                    innerRadius={70}
-                                    outerRadius={120}
-                                    fill="#8884d8"
-                                >
-                                    {formattedBudget.map((entry, index) => (
-                                        <Cell key={index} fill={COLORS[index % COLORS.length]} />
-                                    ))}
-                                </Pie>
-                                <Tooltip formatter={(value) => `${value}%`} />
-                            </PieChart>
-                            <div className="flex-center" style={{position: 'absolute', inset: '0'}}>
-                                <div className="text-center">
-                                    <div className="text-2xl font-bold text-primary">On Track</div>
-                                    <div className="text-sm text-gray-500">Budget Status</div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
