@@ -433,7 +433,6 @@ export function Budget() {
     };
 
     return (
-<<<<<<< HEAD
         <div className="page">
             <div className="container-wide">
                 {/* Header */}
@@ -455,27 +454,6 @@ export function Budget() {
                             ))}
                         </select>
                     </div>
-=======
-        <div className="max-w-6xl mx-auto p-6 space-y-6">
-            {/* Header */}
-            <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-bold">Budget Tracker</h1>
-                <div className="flex items-center gap-4">
-                    <select 
-                        value={selectedMonth} 
-                        onChange={(e) => setSelectedMonth(e.target.value)}
-                        className="px-3 py-2 border border-gray-300 rounded-md"
-                    >
-                        {getAvailableMonths().map(month => (
-                            <option key={month} value={month}>
-                                {new Date(month + '-01').toLocaleDateString('en-US', { 
-                                    year: 'numeric', 
-                                    month: 'long' 
-                                })}
-                            </option>
-                        ))}
-                    </select>
->>>>>>> 95a483e83f795f3dac02799ce7684bf68dffb852
                 </div>
 
             {/* Budget Configuration */}
@@ -913,10 +891,7 @@ export function Budget() {
                     </p>
                 </div>
             )}
-<<<<<<< HEAD
             </div>
-=======
->>>>>>> 95a483e83f795f3dac02799ce7684bf68dffb852
         </div>
     );
 }
