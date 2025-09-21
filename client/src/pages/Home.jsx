@@ -445,8 +445,8 @@ export function Home() {
                                             <div className="text-sm text-gray-500">{new Date(tx.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} • {tx.type}</div>
                                         </div>
                                     </div>
-                                    <div className={`text-lg font-bold ${tx.amount > 0 ? 'text-success' : 'text-error'}`}>
-                                        {tx.amount > 0 ? '+' : ''}${tx.amount.toFixed(2)}
+                                    <div className={`text-lg font-bold ${tx.type === 'Income' || tx.name?.toLowerCase().includes('direct deposit') ? 'text-success' : 'text-error'}`}>
+                                        {tx.type === 'Income' || tx.name?.toLowerCase().includes('direct deposit') ? '+' : ''}${tx.amount.toFixed(2)}
                                     </div>
                                 </div>
                             ))}
