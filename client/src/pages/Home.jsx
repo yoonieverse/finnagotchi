@@ -104,14 +104,8 @@ export function Home() {
     const COLORS = ['#3B82F6', '#10B981', '#F59E0B'];
     const total = formattedBudget.reduce((sum, entry) => sum + entry.value, 0);
 
-    // Sample goals data
-    const goals = [
-        { name: 'Groceries', progress: 75, target: 500, current: 375 },
-        { name: 'Rent', progress: 100, target: 1200, current: 1200 },
-        { name: 'Car', progress: 45, target: 300, current: 135 },
-        { name: 'Down Payment', progress: 20, target: 10000, current: 2000 },
-        { name: 'Portfolio', progress: 60, target: 5000, current: 3000 }
-    ];
+    // Goals data - placeholder for future implementation
+    const goals = [];
 
     // Sample recent transactions
     const recentTransactions = transactions?.slice(0, 5) || [
@@ -131,9 +125,10 @@ export function Home() {
     return (
         <div className="page">
             <div className="container-wide">
-                {/* Welcome Header */}
-                <div className="text-center mb-2xl">
-                    <div className="card" style={{maxWidth: '450px', margin: '0 auto', position: 'relative'}}>
+                {/* Finn and Budget Overview - Side by Side */}
+                <div className="grid grid-2 gap-2xl mb-2xl">
+                    {/* Finn Character */}
+                    <div className="card text-center" style={{position: 'relative'}}>
                         <div className="text-5xl mb-md" style={{position: 'relative'}}>
                             <img 
                                 src={`/src/assets/image copy ${rating}.png`}
@@ -176,7 +171,7 @@ export function Home() {
                             WebkitBackgroundClip: 'text',
                             WebkitTextFillColor: 'transparent',
                             backgroundClip: 'text'
-                        }}></h1>
+                        }}>Finnagotchi</h1>
                         <p className="text-lg text-gray-600 mb-md">{quote}</p>
                         
                         {/* Random shrimp 1 */}
@@ -193,6 +188,36 @@ export function Home() {
                                 zIndex: 1
                             }}
                         />
+                    </div>
+
+                    {/* Budget Overview Chart */}
+                    <div className="card text-center">
+                        <h3 className="text-2xl font-bold text-gray-800 mb-lg">Budget Overview</h3>
+                        <div className="flex-center" style={{position: 'relative', width: '300px', height: '300px', margin: '0 auto'}}>
+                            <PieChart width={300} height={300}>
+                                <Pie
+                                    data={formattedBudget}
+                                    dataKey="value"
+                                    nameKey="name"
+                                    cx="50%"
+                                    cy="50%"
+                                    innerRadius={70}
+                                    outerRadius={120}
+                                    fill="#8884d8"
+                                >
+                                    {formattedBudget.map((entry, index) => (
+                                        <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                                    ))}
+                                </Pie>
+                                <Tooltip formatter={(value) => `${value}%`} />
+                            </PieChart>
+                            <div className="flex-center" style={{position: 'absolute', inset: '0'}}>
+                                <div className="text-center">
+                                    <div className="text-2xl font-bold text-primary">On Track</div>
+                                    <div className="text-sm text-gray-500">Budget Status</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -226,40 +251,8 @@ export function Home() {
                         <div className="text-sm text-gray-500">Saved</div>
                     </div>
                     <div className="card card-small text-center">
-                        <div className="text-3xl font-bold text-warning mb-sm">12</div>
+                        <div className="text-3xl font-bold text-warning mb-sm">0</div>
                         <div className="text-sm text-gray-500">Goals</div>
-                    </div>
-                </div>
-
-                {/* Budget Overview Chart */}
-                <div className="text-center mb-2xl">
-                    <div className="card" style={{maxWidth: '500px', margin: '0 auto'}}>
-                        <h3 className="text-2xl font-bold text-gray-800 mb-lg">Budget Overview</h3>
-                        <div className="flex-center" style={{position: 'relative', width: '300px', height: '300px', margin: '0 auto'}}>
-                            <PieChart width={300} height={300}>
-                                <Pie
-                                    data={formattedBudget}
-                                    dataKey="value"
-                                    nameKey="name"
-                                    cx="50%"
-                                    cy="50%"
-                                    innerRadius={70}
-                                    outerRadius={120}
-                                    fill="#8884d8"
-                                >
-                                    {formattedBudget.map((entry, index) => (
-                                        <Cell key={index} fill={COLORS[index % COLORS.length]} />
-                                    ))}
-                                </Pie>
-                                <Tooltip formatter={(value) => `${value}%`} />
-                            </PieChart>
-                            <div className="flex-center" style={{position: 'absolute', inset: '0'}}>
-                                <div className="text-center">
-                                    <div className="text-2xl font-bold text-primary">On Track</div>
-                                    <div className="text-sm text-gray-500">Budget Status</div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -279,36 +272,16 @@ export function Home() {
                     }}
                 />
 
+                {/* Financial Goals Section - Reserved Space */}
                 <div className="mb-2xl">
                     <h3 className="text-3xl font-bold text-gray-800 mb-xl text-center">Financial Goals</h3>
-                    <div className="grid grid-responsive gap-lg">
-                        {goals.map((goal, index) => (
-                            <div key={index} className="card hover:scale-105 transition">
-                                <div className="text-center mb-md">
-                                    <div className="text-3xl mb-md">
-                                        {index === 0 && '🛒'}
-                                        {index === 1 && '🏠'}
-                                        {index === 2 && '🚗'}
-                                        {index === 3 && '🏡'}
-                                        {index === 4 && '📈'}
-                                    </div>
-                                    <h4 className="font-bold text-gray-800 text-lg">{goal.name}</h4>
-                                </div>
-                                <div className="space-y-md">
-                                    <div className="text-center">
-                                        <div className="text-2xl font-bold text-primary">${goal.current.toLocaleString()}</div>
-                                        <div className="text-sm text-gray-500">of ${goal.target.toLocaleString()}</div>
-                                    </div>
-                                    <div className="progress-bar">
-                                        <div 
-                                            className="progress-fill"
-                                            style={{ width: `${goal.progress}%` }}
-                                        ></div>
-                                    </div>
-                                    <div className="text-center text-sm font-semibold text-gray-600">{goal.progress}% complete</div>
-                                </div>
-                            </div>
-                        ))}
+                    <div className="card text-center p-3xl">
+                        <div className="text-6xl mb-lg">🎯</div>
+                        <h4 className="text-2xl font-bold text-gray-600 mb-md">Goals Coming Soon</h4>
+                        <p className="text-lg text-gray-500 mb-lg">This space is reserved for future financial goal tracking features</p>
+                        <div className="status-indicator status-info">
+                            💡 Goals functionality will be implemented in future updates
+                        </div>
                     </div>
                 </div>
 

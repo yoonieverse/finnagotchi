@@ -81,31 +81,6 @@ export function Goals() {
         }
     };
 
-    const deleteSavingsGoal = (goalId) => {
-        if (!window.confirm("Are you sure you want to delete this savings goal? This action cannot be undone.")) {
-            return;
-        }
-
-        try {
-            // Get all goals from localStorage
-            const allGoals = JSON.parse(localStorage.getItem('savingsGoals') || '[]');
-            
-            // Filter out the goal to be deleted
-            const updatedGoals = allGoals.filter(goal => goal.id !== goalId);
-            
-            // Save updated goals to localStorage
-            localStorage.setItem('savingsGoals', JSON.stringify(updatedGoals));
-            
-            console.log("Goal deleted with ID:", goalId);
-            
-            // Reload goals
-            loadSavingsGoals();
-            
-        } catch (error) {
-            console.error("Error deleting savings goal:", error);
-        }
-    };
-
     const logAllocation = (e) => {
         e.preventDefault();
         if (!allocationForm.goalId) {
@@ -164,136 +139,119 @@ export function Goals() {
     };
 
     return (
-        <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
-            <h2>Savings Goals & Transactions</h2>
-            
-            {/* Savings Goals Section */}
-            <div style={{ marginBottom: "40px" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-                    <h3>Savings Goals</h3>
-                    <div>
+        <div className="page">
+            <div className="container-wide">
+                {/* Page Header */}
+                <div className="page-header">
+                    <h1 className="page-title">Financial Goals</h1>
+                    <p className="page-subtitle">Set targets, track progress, and achieve your financial dreams</p>
+                </div>
+
+                {/* Action Section */}
+                <div className="card mb-2xl">
+                    <div className="flex-between mb-lg">
+                        <div>
+                            <h2 className="text-2xl font-bold text-primary mb-sm">Goal Management</h2>
+                            <p className="text-gray-600">Create and manage your savings goals</p>
+                        </div>
+                        <div className="text-right">
+                            <div className="status-indicator status-info mb-sm">
+                                {savingsGoals.length} goal{savingsGoals.length !== 1 ? 's' : ''} created
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="flex-center gap-lg">
                         <button 
                             onClick={() => setShowGoalForm(true)}
-                            style={{
-                                padding: "10px 20px",
-                                backgroundColor: "#4CAF50",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "5px",
-                                cursor: "pointer",
-                                marginRight: "10px"
-                            }}
+                            className="btn btn-primary btn-lg"
                         >
-                            Create Goal
+                            <span className="flex gap-sm">
+                                <span>🎯 Create Goal</span>
+                            </span>
                         </button>
+                        
                         <button 
                             onClick={() => {
                                 loadSavingsGoals();
                                 setShowAllocationForm(true);
                             }}
-                            style={{
-                                padding: "10px 20px",
-                                backgroundColor: "#2196F3",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "5px",
-                                cursor: "pointer",
-                                marginRight: "10px"
-                            }}
+                            className="btn btn-success btn-lg"
                         >
-                            Log Allocation
+                            <span className="flex gap-sm">
+                                <span>💰 Log Allocation</span>
+                            </span>
                         </button>
+                        
                         <button 
                             onClick={loadSavingsGoals}
-                            style={{
-                                padding: "10px 20px",
-                                backgroundColor: "#FF9800",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "5px",
-                                cursor: "pointer"
-                            }}
+                            className="btn btn-secondary btn-lg"
                         >
-                            Refresh Goals
+                            <span className="flex gap-sm">
+                                <span>🔄 Refresh</span>
+                            </span>
                         </button>
                     </div>
                 </div>
 
                 {/* Create Goal Form */}
                 {showGoalForm && (
-                    <div style={{
-                        border: "1px solid #ddd",
-                        padding: "20px",
-                        borderRadius: "8px",
-                        marginBottom: "20px",
-                        backgroundColor: "#f9f9f9"
-                    }}>
-                        <h4>Create New Savings Goal</h4>
-                        <form onSubmit={createSavingsGoal}>
-                            <div style={{ marginBottom: "15px" }}>
-                                <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>
-                                    Goal Name:
-                                </label>
-                                <input
-                                    type="text"
-                                    value={goalForm.name}
-                                    onChange={(e) => setGoalForm({ ...goalForm, name: e.target.value })}
-                                    required
-                                    style={{
-                                        width: "100%",
-                                        padding: "8px",
-                                        border: "1px solid #ccc",
-                                        borderRadius: "4px"
-                                    }}
-                                />
+                    <div className="card bg-gradient-card mb-2xl">
+                        <div className="text-center mb-2xl">
+                            <div className="text-6xl mb-lg">🎯</div>
+                            <h3 className="text-3xl font-bold text-primary mb-md">Create New Savings Goal</h3>
+                            <p className="text-gray-600">Set a target and start tracking your progress</p>
+                        </div>
+                        
+                        <form onSubmit={createSavingsGoal} className="max-w-2xl mx-auto">
+                            <div className="grid grid-2 gap-lg mb-xl">
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-sm">
+                                        Goal Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={goalForm.name}
+                                        onChange={(e) => setGoalForm({ ...goalForm, name: e.target.value })}
+                                        required
+                                        placeholder="e.g., Emergency Fund, Vacation, New Car"
+                                        className="input w-full"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-sm">
+                                        Target Amount ($)
+                                    </label>
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        min="0"
+                                        value={goalForm.targetAmount}
+                                        onChange={(e) => setGoalForm({ ...goalForm, targetAmount: e.target.value })}
+                                        required
+                                        placeholder="0.00"
+                                        className="input w-full"
+                                    />
+                                </div>
                             </div>
-                            <div style={{ marginBottom: "15px" }}>
-                                <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>
-                                    Target Amount ($):
-                                </label>
-                                <input
-                                    type="number"
-                                    step="0.01"
-                                    min="0"
-                                    value={goalForm.targetAmount}
-                                    onChange={(e) => setGoalForm({ ...goalForm, targetAmount: e.target.value })}
-                                    required
-                                    style={{
-                                        width: "100%",
-                                        padding: "8px",
-                                        border: "1px solid #ccc",
-                                        borderRadius: "4px"
-                                    }}
-                                />
-                            </div>
-                            <div>
+                            
+                            <div className="flex-center gap-lg">
                                 <button
                                     type="submit"
-                                    style={{
-                                        padding: "10px 20px",
-                                        backgroundColor: "#4CAF50",
-                                        color: "white",
-                                        border: "none",
-                                        borderRadius: "5px",
-                                        cursor: "pointer",
-                                        marginRight: "10px"
-                                    }}
+                                    className="btn btn-primary btn-lg"
                                 >
-                                    Create Goal
+                                    <span className="flex gap-sm">
+                                        <span>✨ Create Goal</span>
+                                    </span>
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setShowGoalForm(false)}
-                                    style={{
-                                        padding: "10px 20px",
-                                        backgroundColor: "#f44336",
-                                        color: "white",
-                                        border: "none",
-                                        borderRadius: "5px",
-                                        cursor: "pointer"
-                                    }}
+                                    className="btn btn-secondary btn-lg"
                                 >
-                                    Cancel
+                                    <span className="flex gap-sm">
+                                        <span>❌ Cancel</span>
+                                    </span>
                                 </button>
                             </div>
                         </form>
@@ -302,88 +260,71 @@ export function Goals() {
 
                 {/* Log Allocation Form */}
                 {showAllocationForm && (
-                    <div style={{
-                        border: "1px solid #ddd",
-                        padding: "20px",
-                        borderRadius: "8px",
-                        marginBottom: "20px",
-                        backgroundColor: "#f9f9f9"
-                    }}>
-                        <h4>Log Allocation to Goal</h4>
-                        <p style={{ fontSize: "12px", color: "#666", margin: "0 0 15px 0" }}>
-                            Available goals: {savingsGoals.length} found
-                        </p>
-                        <form onSubmit={logAllocation}>
-                            <div style={{ marginBottom: "15px" }}>
-                                <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>
-                                    Select Goal:
-                                </label>
-                                <select
-                                    value={allocationForm.goalId}
-                                    onChange={(e) => setAllocationForm({ ...allocationForm, goalId: e.target.value })}
-                                    required
-                                    style={{
-                                        width: "100%",
-                                        padding: "8px",
-                                        border: "1px solid #ccc",
-                                        borderRadius: "4px"
-                                    }}
-                                >
-                                    <option value="">Choose a goal...</option>
-                                    {savingsGoals.map((goal) => (
-                                        <option key={goal.id} value={goal.id}>
-                                            {goal.name} (${goal.currentAmount || 0} / ${goal.targetAmount})
-                                        </option>
-                                    ))}
-                                </select>
+                    <div className="card bg-gradient-card mb-2xl">
+                        <div className="text-center mb-2xl">
+                            <div className="text-6xl mb-lg">💰</div>
+                            <h3 className="text-3xl font-bold text-primary mb-md">Log Allocation to Goal</h3>
+                            <p className="text-gray-600">Add money to your existing savings goals</p>
+                        </div>
+                        
+                        <div className="status-indicator status-info mb-xl">
+                            📊 Available goals: {savingsGoals.length} found
+                        </div>
+                        
+                        <form onSubmit={logAllocation} className="max-w-2xl mx-auto">
+                            <div className="grid grid-2 gap-lg mb-xl">
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-sm">
+                                        Select Goal
+                                    </label>
+                                    <select
+                                        value={allocationForm.goalId}
+                                        onChange={(e) => setAllocationForm({ ...allocationForm, goalId: e.target.value })}
+                                        required
+                                        className="input w-full"
+                                    >
+                                        <option value="">Choose a goal...</option>
+                                        {savingsGoals.map((goal) => (
+                                            <option key={goal.id} value={goal.id}>
+                                                {goal.name} (${goal.currentAmount || 0} / ${goal.targetAmount})
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-sm">
+                                        Allocation Amount ($)
+                                    </label>
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        min="0.01"
+                                        value={allocationForm.amount}
+                                        onChange={(e) => setAllocationForm({ ...allocationForm, amount: e.target.value })}
+                                        required
+                                        placeholder="0.00"
+                                        className="input w-full"
+                                    />
+                                </div>
                             </div>
-                            <div style={{ marginBottom: "15px" }}>
-                                <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>
-                                    Allocation Amount ($):
-                                </label>
-                                <input
-                                    type="number"
-                                    step="0.01"
-                                    min="0.01"
-                                    value={allocationForm.amount}
-                                    onChange={(e) => setAllocationForm({ ...allocationForm, amount: e.target.value })}
-                                    required
-                                    style={{
-                                        width: "100%",
-                                        padding: "8px",
-                                        border: "1px solid #ccc",
-                                        borderRadius: "4px"
-                                    }}
-                                />
-                            </div>
-                            <div>
+                            
+                            <div className="flex-center gap-lg">
                                 <button
                                     type="submit"
-                                    style={{
-                                        padding: "10px 20px",
-                                        backgroundColor: "#2196F3",
-                                        color: "white",
-                                        border: "none",
-                                        borderRadius: "5px",
-                                        cursor: "pointer",
-                                        marginRight: "10px"
-                                    }}
+                                    className="btn btn-success btn-lg"
                                 >
-                                    Log Allocation
+                                    <span className="flex gap-sm">
+                                        <span>💸 Log Allocation</span>
+                                    </span>
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setShowAllocationForm(false)}
-                                    style={{
-                                        padding: "10px 20px",
-                                        backgroundColor: "#f44336",
-                                        color: "white",
-                                        border: "none",
-                                        borderRadius: "5px",
-                                        cursor: "pointer"
-                                    }}
+                                    className="btn btn-secondary btn-lg"
                                 >
-                                    Cancel
+                                    <span className="flex gap-sm">
+                                        <span>❌ Cancel</span>
+                                    </span>
                                 </button>
                             </div>
                         </form>
@@ -392,106 +333,108 @@ export function Goals() {
 
                 {/* Display Savings Goals */}
                 {savingsGoals.length > 0 ? (
-                    <div>
-                        {savingsGoals.map((goal) => {
-                            const progress = getProgressPercentage(goal.currentAmount || 0, goal.targetAmount);
-                            return (
-                                <div key={goal.id} style={{
-                                    border: "1px solid #ddd",
-                                    padding: "20px",
-                                    borderRadius: "8px",
-                                    marginBottom: "15px",
-                                    backgroundColor: "white"
-                                }}>
-                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-                                        <h4 style={{ margin: 0 }}>{goal.name}</h4>
-                                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                                            <span style={{ fontWeight: "bold", color: progress >= 100 ? "#4CAF50" : "#2196F3" }}>
-                                                ${goal.currentAmount || 0} / ${goal.targetAmount}
-                                            </span>
-                                            <button
-                                                onClick={() => deleteSavingsGoal(goal.id)}
-                                                style={{
-                                                    padding: "5px 10px",
-                                                    backgroundColor: "#f44336",
-                                                    color: "white",
-                                                    border: "none",
-                                                    borderRadius: "3px",
-                                                    cursor: "pointer",
-                                                    fontSize: "12px"
-                                                }}
-                                                title="Delete this goal"
-                                            >
-                                                Delete
-                                            </button>
+                    <div className="space-y-2xl">
+                        <div className="text-center mb-2xl">
+                            <h2 className="text-3xl font-bold text-primary mb-md">Your Savings Goals</h2>
+                            <p className="text-gray-600">Track your progress and celebrate milestones</p>
+                        </div>
+                        
+                        <div className="grid grid-responsive gap-xl">
+                            {savingsGoals.map((goal) => {
+                                const progress = getProgressPercentage(goal.currentAmount || 0, goal.targetAmount);
+                                const isComplete = progress >= 100;
+                                const remaining = goal.targetAmount - (goal.currentAmount || 0);
+                                
+                                return (
+                                    <div key={goal.id} className="card hover:scale-105 transition">
+                                        <div className="flex-between mb-lg">
+                                            <div>
+                                                <h3 className="text-2xl font-bold text-gray-800 mb-sm">{goal.name}</h3>
+                                                <p className="text-gray-600">Created {new Date(goal.createdAt).toLocaleDateString()}</p>
+                                            </div>
+                                            <div className="text-right">
+                                                <div className={`text-3xl font-bold ${isComplete ? 'text-success' : 'text-primary'}`}>
+                                                    ${(goal.currentAmount || 0).toLocaleString()}
+                                                </div>
+                                                <div className="text-sm text-gray-500">
+                                                    of ${goal.targetAmount.toLocaleString()}
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    
-                                    {/* Progress Bar */}
-                                    <div style={{
-                                        width: "100%",
-                                        backgroundColor: "#e0e0e0",
-                                        borderRadius: "10px",
-                                        overflow: "hidden",
-                                        marginBottom: "10px"
-                                    }}>
-                                        <div style={{
-                                            width: `${progress}%`,
-                                            height: "20px",
-                                            backgroundColor: progress >= 100 ? "#4CAF50" : "#2196F3",
-                                            transition: "width 0.3s ease"
-                                        }}></div>
-                                    </div>
-                                    
-                                    <div style={{ fontSize: "14px", color: "#666" }}>
-                                        {progress.toFixed(1)}% complete
-                                    </div>
+                                        
+                                        {/* Progress Bar */}
+                                        <div className="mb-lg">
+                                            <div className="progress-bar">
+                                                <div 
+                                                    className={`progress-fill ${isComplete ? 'bg-success' : 'bg-primary'}`}
+                                                    style={{ width: `${progress}%` }}
+                                                ></div>
+                                            </div>
+                                            <div className="flex-between mt-sm">
+                                                <span className="text-sm font-semibold text-gray-600">
+                                                    {progress.toFixed(1)}% complete
+                                                </span>
+                                                {!isComplete && (
+                                                    <span className="text-sm text-gray-500">
+                                                        ${remaining.toLocaleString()} remaining
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
 
-                                    {/* Recent Allocations */}
-                                    {goal.allocations && goal.allocations.length > 0 && (
-                                        <div style={{ marginTop: "15px" }}>
-                                            <h5 style={{ margin: "0 0 10px 0", fontSize: "14px" }}>Recent Payments</h5>
-                                            <ul style={{ margin: 0, paddingLeft: "20px", fontSize: "12px" }}>
-                                                {goal.allocations.slice(-3).map((allocation, index) => (
-                                                    <li key={index}>
-                                                        ${allocation.amount} on {new Date(allocation.date).toLocaleDateString()}
-                                                    </li>
-                                                ))}
-                                            </ul>
+                                        {/* Status Badge */}
+                                        <div className="mb-lg">
+                                            {isComplete ? (
+                                                <div className="status-indicator status-success">
+                                                    🎉 Goal Achieved! Congratulations!
+                                                </div>
+                                            ) : (
+                                                <div className="status-indicator status-info">
+                                                    🎯 Keep going! You're making great progress
+                                                </div>
+                                            )}
                                         </div>
-                                    )}
-                                </div>
-                            );
-                        })}
+
+                                        {/* Recent Allocations */}
+                                        {goal.allocations && goal.allocations.length > 0 && (
+                                            <div className="card-small bg-gradient-light">
+                                                <h4 className="font-bold text-gray-800 mb-md flex items-center gap-sm">
+                                                    <span>💸</span>
+                                                    Recent Payments
+                                                </h4>
+                                                <div className="space-y-sm">
+                                                    {goal.allocations.slice(-3).map((allocation, index) => (
+                                                        <div key={index} className="flex-between p-sm bg-white rounded-lg">
+                                                            <span className="font-semibold text-success">
+                                                                +${allocation.amount.toLocaleString()}
+                                                            </span>
+                                                            <span className="text-sm text-gray-500">
+                                                                {new Date(allocation.date).toLocaleDateString()}
+                                                            </span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
                 ) : (
-                    <p style={{ textAlign: "center", color: "#666", fontStyle: "italic" }}>
-                        No savings goals yet. Create your first goal to get started!
-                    </p>
-                )}
-            </div>
-
-            {/* Transactions Section */}
-            <div>
-                <h3></h3>
-                {transactions && transactions.length > 0 ? (
-                    <ul style={{ listStyle: "none", padding: 0 }}>
-                        {transactions.map((tx, index) => (
-                            <li key={index} style={{
-                                border: "1px solid #ddd",
-                                padding: "15px",
-                                borderRadius: "8px",
-                                marginBottom: "10px",
-                                backgroundColor: "white"
-                            }}>
-                                <strong>{tx.name}</strong>: ${tx.amount} on {tx.date}
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p style={{ textAlign: "center", color: "#666", fontStyle: "italic" }}>
-                       
-                    </p>
+                    <div className="card text-center p-3xl">
+                        <div className="text-6xl mb-lg">🎯</div>
+                        <h3 className="text-2xl font-bold text-gray-600 mb-md">No Goals Yet</h3>
+                        <p className="text-lg text-gray-500 mb-lg">Create your first savings goal to start tracking your financial progress</p>
+                        <button 
+                            onClick={() => setShowGoalForm(true)}
+                            className="btn btn-primary btn-lg"
+                        >
+                            <span className="flex gap-sm">
+                                <span>✨ Create Your First Goal</span>
+                            </span>
+                        </button>
+                    </div>
                 )}
             </div>
         </div>
