@@ -6,22 +6,29 @@ import { TransactionContext } from "./contexts/transactionContext";
 
 function App() {
   const [transactions, setTransactions] = useState([]);
+  const [isNavbarCollapsed, setIsNavbarCollapsed] = useState(false);
   const auth = getAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     onAuthStateChanged(auth, (data) => {
-      if (data) navigate("/");
+      if (data) navigate("/home");
       else navigate("/signup");
     });
   }, [auth, navigate]);
 
+  const toggleNavbar = () => {
+    setIsNavbarCollapsed(!isNavbarCollapsed);
+  };
+
   return (
     <div>
-      {auth.currentUser && <Navbar />}
-      <TransactionContext.Provider value={{ transactions, setTransactions }}>
-        <Outlet />
-      </TransactionContext.Provider>
+      {auth.currentUser && <Navbar isCollapsed={isNavbarCollapsed} onToggle={toggleNavbar} />}
+      <div className={auth.currentUser ? `main-content ${isNavbarCollapsed ? 'collapsed' : ''}` : ""}>
+        <TransactionContext.Provider value={{ transactions, setTransactions }}>
+          <Outlet />
+        </TransactionContext.Provider>
+      </div>
     </div>
   );
 }
