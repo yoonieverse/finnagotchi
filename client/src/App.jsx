@@ -6,6 +6,7 @@ import { TransactionContext } from "./contexts/transactionContext";
 
 function App() {
   const [transactions, setTransactions] = useState([]);
+  const [isNavbarCollapsed, setIsNavbarCollapsed] = useState(false);
   const auth = getAuth();
   const navigate = useNavigate();
 
@@ -16,10 +17,14 @@ function App() {
     });
   }, [auth, navigate]);
 
+  const toggleNavbar = () => {
+    setIsNavbarCollapsed(!isNavbarCollapsed);
+  };
+
   return (
     <div>
-      {auth.currentUser && <Navbar />}
-      <div className={auth.currentUser ? "main-content" : ""}>
+      {auth.currentUser && <Navbar isCollapsed={isNavbarCollapsed} onToggle={toggleNavbar} />}
+      <div className={auth.currentUser ? `main-content ${isNavbarCollapsed ? 'collapsed' : ''}` : ""}>
         <TransactionContext.Provider value={{ transactions, setTransactions }}>
           <Outlet />
         </TransactionContext.Provider>
