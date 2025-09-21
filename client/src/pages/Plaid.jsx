@@ -651,19 +651,19 @@ export function Plaid() {
               
               <div className="grid grid-3 gap-xl">
                 <div className="card-small text-center bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
-                  <div className="w-16 h-16 bg-success text-white rounded-full flex items-center justify-center mx-auto mb-lg text-2xl font-bold">1</div>
+                  <div className="w-16 h-16 bg-success text-white rounded-full flex-center mx-auto mb-lg text-2xl font-bold">1</div>
                   <h4 className="text-xl font-bold text-gray-900 mb-md">Authenticate</h4>
                   <p className="text-gray-600">Complete the bank authentication in the secure Plaid popup window</p>
                 </div>
                 
                 <div className="card-small text-center bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200">
-                  <div className="w-16 h-16 bg-warning text-white rounded-full flex items-center justify-center mx-auto mb-lg text-2xl font-bold">2</div>
+                  <div className="w-16 h-16 bg-warning text-white rounded-full flex-center mx-auto mb-lg text-2xl font-bold">2</div>
                   <h4 className="text-xl font-bold text-gray-900 mb-md">Fetch Data</h4>
                   <p className="text-gray-600">Once connected, click "Fetch Transactions" to retrieve your financial data</p>
                 </div>
                 
                 <div className="card-small text-center bg-gradient-to-br from-orange-50 to-red-50 border-orange-200">
-                  <div className="w-16 h-16 bg-error text-white rounded-full flex items-center justify-center mx-auto mb-lg text-2xl font-bold">3</div>
+                  <div className="w-16 h-16 bg-error text-white rounded-full flex-center mx-auto mb-lg text-2xl font-bold">3</div>
                   <h4 className="text-xl font-bold text-gray-900 mb-md">Analyze</h4>
                   <p className="text-gray-600">View your beautiful transaction dashboard with insights and analytics</p>
                 </div>
