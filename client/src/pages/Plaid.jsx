@@ -486,7 +486,7 @@ export function Plaid() {
             Banking Dashboard
           </h1>
           <p className="page-subtitle">
-            Connect your bank account to view and analyze your financial transactions with beautiful insights.
+            Connect your bank account with Plaid to view and analyze your financial transactions.
           </p>
         </div>
 
@@ -555,15 +555,13 @@ export function Plaid() {
             </button>
           )}
 
-          {isAuthenticated && (
-            <button
-              onClick={handleReset}
-              disabled={loading || fetchingTransactions}
-              className={`btn btn-lg ${(loading || fetchingTransactions) ? 'btn-secondary' : 'btn-error'}`}
-            >
-              🔄 Reset Connection
-            </button>
-          )}
+          <button
+            onClick={handleReset}
+            disabled={true}
+            className="btn btn-lg btn-secondary opacity-50 cursor-not-allowed"
+          >
+            🔄 Reset Connection
+          </button>
         </div>
 
         {/* Transaction Table */}
@@ -573,46 +571,60 @@ export function Plaid() {
 
         {/* AI Analysis Section */}
         {(analysis || analyzing) && (
-          <div className="mt-12 space-y-6 animate-fade-in">
-            <div className="text-center">
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
-                AI Financial Analysis
-              </h2>
-              <p className="text-gray-600">Powered by Gemini AI</p>
-            </div>
-            
-            <div className="max-w-4xl mx-auto">
-              <div className="bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 p-8 rounded-3xl shadow-xl border border-purple-200">
+          <div className="mt-2xl">
+            <div className="card bg-gradient-card">
+              <div className="text-center mb-2xl">
+                <div className="text-6xl mb-lg">🤖</div>
+                <h2 className="page-title mb-md">
+                  AI Financial Analysis
+                </h2>
+                <p className="page-subtitle">Powered by Gemini AI • Intelligent insights from your transaction data</p>
+              </div>
+
+              <div className="max-w-5xl mx-auto">
                 {analyzing ? (
-                  <div className="text-center py-8">
-                    <div className="relative">
-                      <div className="w-12 h-12 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-4"></div>
-                      <div className="absolute inset-0 w-12 h-12 border-4 border-pink-200 border-t-pink-600 rounded-full animate-spin mx-auto animation-delay-150"></div>
+                  <div className="text-center p-3xl">
+                    <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-r from-primary to-accent rounded-full mb-xl">
+                      <div className="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
                     </div>
-                    <div className="text-lg font-semibold text-purple-700 mb-2">Analyzing Your Transactions</div>
-                    <div className="text-purple-600">AI is reviewing your financial patterns...</div>
+                    <div className="text-2xl font-bold text-primary mb-md">Analyzing Your Transactions</div>
+                    <div className="text-lg text-gray-600 mb-lg">AI is reviewing your financial patterns and spending habits...</div>
+                    <div className="flex-center gap-sm">
+                      <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
+                      <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                      <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                    </div>
                   </div>
                 ) : analysis ? (
-                  <div className="space-y-6">
-                    <div className="flex items-start space-x-4">
-                      <div className="text-3xl">🤖</div>
-                      <div className="flex-1">
-                        <div className="prose prose-lg max-w-none">
-                          <div className="whitespace-pre-wrap text-gray-800 leading-relaxed">
-                            {analysis}
+                  <div className="space-y-2xl">
+                    <div className="card bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
+                      <div className="flex items-start gap-lg">
+                        <div className="text-4xl">🧠</div>
+                        <div className="flex-1">
+                          <h3 className="text-xl font-bold text-gray-800 mb-lg">Analysis Results</h3>
+                          <div className="prose prose-lg max-w-none">
+                            <div className="whitespace-pre-wrap text-gray-700 leading-relaxed text-lg">
+                              {analysis}
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
                     
-                    <div className="flex justify-center pt-4">
+                    <div className="flex-center gap-lg">
                       <button
                         onClick={() => analyzeTransactions(transactions)}
                         disabled={analyzing}
-                        className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-pink-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="btn btn-primary btn-lg"
                       >
-                        🔄 Refresh Analysis
+                        <span className="flex gap-sm">
+                          <span>🔄 Refresh Analysis</span>
+                        </span>
                       </button>
+                      
+                      <div className="status-indicator status-info">
+                        💡 Analysis updates with new transaction data
+                      </div>
                     </div>
                   </div>
                 ) : null}
@@ -621,39 +633,39 @@ export function Plaid() {
           </div>
         )}
 
-        {/* Instructions */}
+        {/* Get Started Instructions */}
         {transactions.length === 0 && (
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-white/80 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-white/20">
-              <div className="text-center mb-6">
-                <div className="text-4xl mb-4">🚀</div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Get Started</h3>
-                <p className="text-gray-600">Follow these simple steps to connect your bank account</p>
+          <div className="container-wide">
+            <div className="card bg-gradient-card">
+              <div className="text-center mb-2xl">
+                <div className="text-6xl mb-lg">🚀</div>
+                <h3 className="page-title mb-md">Get Started with Plaid</h3>
+                <p className="page-subtitle">Follow these simple steps to connect your bank account and start tracking your finances</p>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100">
-                  <div className="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">1</div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Connect Account</h4>
-                  <p className="text-sm text-gray-600">Click "Connect Bank Account" to start the secure authentication process</p>
+              <div className="grid grid-3 gap-xl">
+                <div className="card-small text-center bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
+                  <div className="w-16 h-16 bg-success text-white rounded-full flex items-center justify-center mx-auto mb-lg text-2xl font-bold">1</div>
+                  <h4 className="text-xl font-bold text-gray-900 mb-md">Authenticate</h4>
+                  <p className="text-gray-600">Complete the bank authentication in the secure Plaid popup window</p>
                 </div>
                 
-                <div className="text-center p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl border border-green-100">
-                  <div className="w-12 h-12 bg-green-500 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">2</div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Authenticate</h4>
-                  <p className="text-sm text-gray-600">Complete the bank authentication in the secure Plaid popup window</p>
+                <div className="card-small text-center bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200">
+                  <div className="w-16 h-16 bg-warning text-white rounded-full flex items-center justify-center mx-auto mb-lg text-2xl font-bold">2</div>
+                  <h4 className="text-xl font-bold text-gray-900 mb-md">Fetch Data</h4>
+                  <p className="text-gray-600">Once connected, click "Fetch Transactions" to retrieve your financial data</p>
                 </div>
                 
-                <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border border-purple-100">
-                  <div className="w-12 h-12 bg-purple-500 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">3</div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Fetch Data</h4>
-                  <p className="text-sm text-gray-600">Once connected, click "Fetch Transactions" to retrieve your data</p>
+                <div className="card-small text-center bg-gradient-to-br from-orange-50 to-red-50 border-orange-200">
+                  <div className="w-16 h-16 bg-error text-white rounded-full flex items-center justify-center mx-auto mb-lg text-2xl font-bold">3</div>
+                  <h4 className="text-xl font-bold text-gray-900 mb-md">Analyze</h4>
+                  <p className="text-gray-600">View your beautiful transaction dashboard with insights and analytics</p>
                 </div>
-                
-                <div className="text-center p-6 bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl border border-orange-100">
-                  <div className="w-12 h-12 bg-orange-500 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">4</div>
-                  <h4 className="font-semibold text-gray-900 mb-2">Analyze</h4>
-                  <p className="text-sm text-gray-600">View your beautiful transaction dashboard with insights and analytics</p>
+              </div>
+              
+              <div className="text-center mt-2xl">
+                <div className="status-indicator status-info">
+                  💡 Tip: Make sure you have your bank login credentials ready before starting
                 </div>
               </div>
             </div>

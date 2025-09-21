@@ -80,8 +80,8 @@ export default function Navbar({ isCollapsed, onToggle }) {
             </li>
             <li className={location.pathname === '/portfolio' ? 'active' : ''}>
               <Link to="/portfolio">
-                <img src={tabButtonIcon} alt="Portfolio" className="tab-button-icon" />
-                <span className="tab-text">Portfolio</span>
+                <img src={tabButtonIcon} alt="Market Overview" className="tab-button-icon" />
+                <span className="tab-text">Market Overview</span>
               </Link>
             </li>
             <li className={location.pathname === '/plaid' ? 'active' : ''}>
