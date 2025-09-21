@@ -81,6 +81,31 @@ export function Goals() {
         }
     };
 
+    const deleteSavingsGoal = (goalId) => {
+        if (!window.confirm("Are you sure you want to delete this savings goal? This action cannot be undone.")) {
+            return;
+        }
+
+        try {
+            // Get all goals from localStorage
+            const allGoals = JSON.parse(localStorage.getItem('savingsGoals') || '[]');
+            
+            // Filter out the goal to be deleted
+            const updatedGoals = allGoals.filter(goal => goal.id !== goalId);
+            
+            // Save updated goals to localStorage
+            localStorage.setItem('savingsGoals', JSON.stringify(updatedGoals));
+            
+            console.log("Goal deleted with ID:", goalId);
+            
+            // Reload goals
+            loadSavingsGoals();
+            
+        } catch (error) {
+            console.error("Error deleting savings goal:", error);
+        }
+    };
+
     const logAllocation = (e) => {
         e.preventDefault();
         if (!allocationForm.goalId) {
@@ -380,9 +405,26 @@ export function Goals() {
                                 }}>
                                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
                                         <h4 style={{ margin: 0 }}>{goal.name}</h4>
-                                        <span style={{ fontWeight: "bold", color: progress >= 100 ? "#4CAF50" : "#2196F3" }}>
-                                            ${goal.currentAmount || 0} / ${goal.targetAmount}
-                                        </span>
+                                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                                            <span style={{ fontWeight: "bold", color: progress >= 100 ? "#4CAF50" : "#2196F3" }}>
+                                                ${goal.currentAmount || 0} / ${goal.targetAmount}
+                                            </span>
+                                            <button
+                                                onClick={() => deleteSavingsGoal(goal.id)}
+                                                style={{
+                                                    padding: "5px 10px",
+                                                    backgroundColor: "#f44336",
+                                                    color: "white",
+                                                    border: "none",
+                                                    borderRadius: "3px",
+                                                    cursor: "pointer",
+                                                    fontSize: "12px"
+                                                }}
+                                                title="Delete this goal"
+                                            >
+                                                Delete
+                                            </button>
+                                        </div>
                                     </div>
                                     
                                     {/* Progress Bar */}
