@@ -52,22 +52,22 @@ export function Settings() {
 
     setBudgetPref(newBudget);
   };
-  const saveinput = async(newBudget) => {
+  // const saveinput = async(newBudget) => {
     
-    const res = await fetch("http://localhost:3333/budget", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          uid: auth.currentUser.uid,
-          budget_preference: {
-            needs: budgetPref.needs,
-            wants: budgetPref.wants,
-            savings: budgetPref.savings,
-          },
-        }),
-      });
-      console.log('saved!')
-  }
+  //   const res = await fetch("http://localhost:3333/budget", {
+  //       method: "PUT",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({
+  //         uid: auth.currentUser.uid,
+  //         budget_preference: {
+  //           needs: budgetPref.needs,
+  //           wants: budgetPref.wants,
+  //           savings: budgetPref.savings,
+  //         },
+  //       }),
+  //     });
+  //     console.log('saved!')
+  // }
 
   return (
     <div>
@@ -86,7 +86,7 @@ export function Settings() {
         </div>
       ))}
       <p>Total: {Object.values(budgetPref).reduce((sum, v) => sum + v, 0)}%</p>
-      <button onClick={saveinput}>save</button>
+      <button onClick={()=>{}}>save</button>
     </div>
   );
 }
