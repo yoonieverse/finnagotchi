@@ -433,117 +433,118 @@ export function Budget() {
     };
 
     return (
-        <div className="max-w-6xl mx-auto p-6 space-y-6">
-            {/* Header */}
-            <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-bold">Budget Tracker</h1>
-                <div className="flex items-center gap-4">
-                    <select 
-                        value={selectedMonth} 
-                        onChange={(e) => setSelectedMonth(e.target.value)}
-                        className="px-3 py-2 border border-gray-300 rounded-md"
-                    >
-                        {getAvailableMonths().map(month => (
-                            <option key={month} value={month}>
-                                {new Date(month + '-01').toLocaleDateString('en-US', { 
-                                    year: 'numeric', 
-                                    month: 'long' 
-                                })}
-                            </option>
-                        ))}
-                    </select>
+        <div className="page">
+            <div className="container-wide">
+                {/* Header */}
+                <div className="flex-between mb-xl">
+                    <h1 className="page-title">Budget Tracker</h1>
+                    <div className="flex gap-md">
+                        <select 
+                            value={selectedMonth} 
+                            onChange={(e) => setSelectedMonth(e.target.value)}
+                            className="input"
+                        >
+                            {getAvailableMonths().map(month => (
+                                <option key={month} value={month}>
+                                    {new Date(month + '-01').toLocaleDateString('en-US', { 
+                                        year: 'numeric', 
+                                        month: 'long' 
+                                    })}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
-            </div>
 
             {/* Budget Configuration */}
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <div className="flex justify-between items-center mb-4">
+            <div className="card mb-xl">
+                <div className="flex-between mb-md">
                     <h2 className="text-xl font-semibold">Budget Configuration</h2>
                     <button
                         onClick={() => setIsEditingBudget(!isEditingBudget)}
-                        className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                        className="btn btn-primary"
                     >
                         {isEditingBudget ? 'Cancel' : 'Edit Budget'}
                     </button>
                 </div>
                 
                 {isEditingBudget ? (
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <div className="grid grid-4 gap-md">
+                        <div className="input-group">
+                            <label className="input-label">
                                 Monthly Income ($)
                             </label>
                             <input
                                 type="number"
                                 value={budgetConfig.monthlyIncome}
                                 onChange={(e) => handleBudgetChange('monthlyIncome', e.target.value)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                className="input"
                                 placeholder="Enter monthly income"
                             />
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <div className="input-group">
+                            <label className="input-label">
                                 Needs (%)
                             </label>
                             <input
                                 type="number"
                                 value={budgetConfig.needs}
                                 onChange={(e) => handleBudgetChange('needs', e.target.value)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                className="input"
                                 min="0"
                                 max="100"
                             />
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <div className="input-group">
+                            <label className="input-label">
                                 Wants (%)
                             </label>
                             <input
                                 type="number"
                                 value={budgetConfig.wants}
                                 onChange={(e) => handleBudgetChange('wants', e.target.value)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                className="input"
                                 min="0"
                                 max="100"
                             />
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <div className="input-group">
+                            <label className="input-label">
                                 Savings (%)
                             </label>
                             <input
                                 type="number"
                                 value={budgetConfig.savings}
                                 onChange={(e) => handleBudgetChange('savings', e.target.value)}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                className="input"
                                 min="0"
                                 max="100"
                             />
                         </div>
-                        <div className="md:col-span-4 flex justify-end mt-4">
+                        <div className="flex-end mt-md" style={{gridColumn: 'span 4'}}>
                             <button
                                 onClick={saveBudgetConfig}
-                                className="px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+                                className="btn btn-success"
                             >
                                 Save Budget Configuration
                             </button>
                         </div>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
-                        <div className="text-center p-3 bg-gray-50 rounded">
+                    <div className="grid grid-4 gap-md text-sm">
+                        <div className="text-center p-md bg-gray-50 rounded">
                             <div className="font-semibold">Monthly Income</div>
                             <div className="text-lg">{formatCurrency(budgetConfig.monthlyIncome)}</div>
                         </div>
-                        <div className="text-center p-3 bg-blue-50 rounded">
+                        <div className="text-center p-md bg-primary-lightest rounded">
                             <div className="font-semibold">Needs</div>
                             <div className="text-lg">{budgetConfig.needs}%</div>
                         </div>
-                        <div className="text-center p-3 bg-purple-50 rounded">
+                        <div className="text-center p-md bg-accent-lighter rounded">
                             <div className="font-semibold">Wants</div>
                             <div className="text-lg">{budgetConfig.wants}%</div>
                         </div>
-                        <div className="text-center p-3 bg-green-50 rounded">
+                        <div className="text-center p-md bg-success-light rounded">
                             <div className="font-semibold">Savings</div>
                             <div className="text-lg">{budgetConfig.savings}%</div>
                         </div>
@@ -554,8 +555,8 @@ export function Budget() {
             {processedData && (
                 <>
                     {/* Monthly Overview */}
-                    <div className="bg-white border border-gray-200 rounded-lg p-6">
-                        <div className="flex justify-between items-center mb-4">
+                    <div className="card mb-xl">
+                        <div className="flex-between mb-md">
                             <h2 className="text-xl font-semibold">
                                 Monthly Overview - {new Date(selectedMonth + '-01').toLocaleDateString('en-US', { 
                                     year: 'numeric', 
@@ -563,7 +564,7 @@ export function Budget() {
                                 })}
                             </h2>
                             {processedData.isCurrentMonth && (
-                                <div className="text-sm text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+                                <div className="status-indicator status-info">
                                     Day {processedData.daysPassed} of {processedData.daysInMonth} 
                                     ({(processedData.monthProgress * 100).toFixed(0)}% complete)
                                 </div>
@@ -890,6 +891,7 @@ export function Budget() {
                     </p>
                 </div>
             )}
+            </div>
         </div>
     );
 }

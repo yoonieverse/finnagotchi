@@ -17,7 +17,7 @@
 
 .navbar.collapsed {
   width: 60px;
-  padding: 20px 8px;
+  padding: 40px 8px;
 }
 
 .toggle-btn {
@@ -49,6 +49,57 @@
   font-size: 20px;
   font-weight: bold;
   color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Google Account Section */
+.google-account-section {
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 12px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.google-account-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.google-icon {
+  width: 32px;
+  height: 32px;
+  background: #3b82f6;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.google-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.google-email {
+  font-size: 12px;
+  font-weight: 500;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.google-label {
+  font-size: 10px;
+  color: #64748b;
+  margin-top: 2px;
 }
 
 .nav-links {

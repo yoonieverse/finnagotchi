@@ -8,16 +8,21 @@
   overflow: hidden;
 }
 
-/* New Ocean Background with Waves */
-.ocean-background {
+/* Simple Ocean-like Background */
+.signup-container {
   min-height: 100vh;
-  position: relative;
-  overflow: auto;
   background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 25%, #7dd3fc 50%, #38bdf8 75%, #0ea5e9 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4rem 2rem;
+  padding: 2rem;
+}
+
+/* Centered Content */
+.signup-content {
+  width: 100%;
+  max-width: 40rem;
+  text-align: center;
 }
 
 /* Animated Wave SVG */
@@ -769,9 +774,11 @@
   padding: 3rem;
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  margin-top: 2rem;
+  margin: 2rem auto 0;
   position: relative;
   overflow: hidden;
+  text-align: center;
+  width: 100%;
 }
 
 .auth-card::before {

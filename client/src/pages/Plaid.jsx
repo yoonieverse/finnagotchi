@@ -124,47 +124,53 @@ const TransactionTable = ({ transactions }) => {
   const netAmount = totalIncome - totalExpenses;
 
   return (
-    <div className="mt-12 space-y-8 animate-fade-in">
+    <div className="mt-2xl space-y-xl animate-fade-in">
       <div className="text-center">
-        <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
+        <h2 className="text-3xl font-bold text-primary mb-sm">
           Transaction History
         </h2>
         <p className="text-gray-600">Your financial activity overview</p>
       </div>
       
       {/* Enhanced Summary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="relative bg-gradient-to-br from-blue-50 to-indigo-100 p-6 rounded-2xl border border-blue-200 shadow-sm hover:shadow-md transition-all duration-300">
-          <div className="absolute top-4 right-4 text-2xl opacity-50">📊</div>
-          <div className="text-sm font-medium text-blue-600 mb-1">Total Transactions</div>
-          <div className="text-3xl font-bold text-blue-900">{transactions.length}</div>
-        </div>
-        
-        <div className="relative bg-gradient-to-br from-red-50 to-rose-100 p-6 rounded-2xl border border-red-200 shadow-sm hover:shadow-md transition-all duration-300">
-          <div className="absolute top-4 right-4 text-2xl opacity-50">💸</div>
-          <div className="text-sm font-medium text-red-600 mb-1">Total Expenses</div>
-          <div className="text-3xl font-bold text-red-900">-{formatCurrency(totalExpenses)}</div>
-        </div>
-        
-        <div className="relative bg-gradient-to-br from-green-50 to-emerald-100 p-6 rounded-2xl border border-green-200 shadow-sm hover:shadow-md transition-all duration-300">
-          <div className="absolute top-4 right-4 text-2xl opacity-50">💰</div>
-          <div className="text-sm font-medium text-green-600 mb-1">Total Income</div>
-          <div className="text-3xl font-bold text-green-900">+{formatCurrency(totalIncome)}</div>
-        </div>
-        
-        <div className={`relative bg-gradient-to-br p-6 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 ${
-          netAmount >= 0 
-            ? 'from-emerald-50 to-green-100 border-emerald-200' 
-            : 'from-orange-50 to-red-100 border-orange-200'
-        } border`}>
-          <div className="absolute top-4 right-4 text-2xl opacity-50">
-            {netAmount >= 0 ? '📈' : '📉'}
+      <div className="grid grid-4 gap-lg">
+        <div className="card card-small hover:scale-105 transition">
+          <div className="flex-between mb-sm">
+            <div className="text-sm font-medium text-primary">Total Transactions</div>
+            <div className="text-2xl opacity-50">📊</div>
           </div>
-          <div className={`text-sm font-medium mb-1 ${
-            netAmount >= 0 ? 'text-emerald-600' : 'text-orange-600'
-          }`}>Net Amount</div>
+          <div className="text-3xl font-bold text-primary">{transactions.length}</div>
+        </div>
+        
+        <div className="card card-small hover:scale-105 transition">
+          <div className="flex-between mb-sm">
+            <div className="text-sm font-medium text-error">Total Expenses</div>
+            <div className="text-2xl opacity-50">💸</div>
+          </div>
+          <div className="text-3xl font-bold text-error">-{formatCurrency(totalExpenses)}</div>
+        </div>
+        
+        <div className="card card-small hover:scale-105 transition">
+          <div className="flex-between mb-sm">
+            <div className="text-sm font-medium text-success">Total Income</div>
+            <div className="text-2xl opacity-50">💰</div>
+          </div>
+          <div className="text-3xl font-bold text-success">+{formatCurrency(totalIncome)}</div>
+        </div>
+        
+        <div className={`card card-small hover:scale-105 transition ${
+          netAmount >= 0 ? 'bg-gradient-light' : 'bg-gradient-light'
+        }`}>
+          <div className="flex-between mb-sm">
+            <div className={`text-sm font-medium ${
+              netAmount >= 0 ? 'text-success' : 'text-warning'
+            }`}>Net Amount</div>
+            <div className="text-2xl opacity-50">
+              {netAmount >= 0 ? '📈' : '📉'}
+            </div>
+          </div>
           <div className={`text-3xl font-bold ${
-            netAmount >= 0 ? 'text-emerald-900' : 'text-orange-900'
+            netAmount >= 0 ? 'text-success' : 'text-warning'
           }`}>
             {netAmount >= 0 ? '+' : ''}{formatCurrency(netAmount)}
           </div>
@@ -172,48 +178,50 @@ const TransactionTable = ({ transactions }) => {
       </div>
       
       {/* Enhanced Filter Controls */}
-      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-          <select 
-            value={filterCategory} 
-            onChange={(e) => setFilterCategory(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
-          >
-            <option value="">All Categories</option>
-            {uniqueCategories.map(category => (
-              <option key={category} value={category}>{category}</option>
-            ))}
-          </select>
-          
-          {filterCategory && (
-            <button
-              onClick={() => setFilterCategory('')}
-              className="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors duration-200"
+      <div className="card card-small">
+        <div className="flex-between">
+          <div className="flex gap-md">
+            <select 
+              value={filterCategory} 
+              onChange={(e) => setFilterCategory(e.target.value)}
+              className="input"
             >
-              Clear filter ×
-            </button>
-          )}
-        </div>
-        
-        <div className="text-sm text-gray-600 bg-gray-50 px-3 py-1 rounded-lg">
-          Showing {filteredTransactions.length} of {transactions.length} transactions
+              <option value="">All Categories</option>
+              {uniqueCategories.map(category => (
+                <option key={category} value={category}>{category}</option>
+              ))}
+            </select>
+            
+            {filterCategory && (
+              <button
+                onClick={() => setFilterCategory('')}
+                className="btn btn-sm btn-secondary"
+              >
+                Clear filter ×
+              </button>
+            )}
+          </div>
+          
+          <div className="status-indicator status-info">
+            Showing {filteredTransactions.length} of {transactions.length} transactions
+          </div>
         </div>
       </div>
 
       {/* Enhanced Transaction Table */}
-      <div className="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-200">
+      <div className="card overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full">
-            <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
+          <table className="w-full">
+            <thead className="bg-gradient-card">
               <tr>
                 <th 
                   onClick={() => handleSort('date')}
-                  className="px-8 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-200 transition-colors duration-200 select-none"
+                  className="p-lg text-left text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition select-none"
                 >
-                  <div className="flex items-center space-x-1">
+                  <div className="flex gap-sm">
                     <span>Date</span>
                     {sortField === 'date' && (
-                      <span className="text-indigo-600">{sortDirection === 'asc' ? '↑' : '↓'}</span>
+                      <span className="text-primary">{sortDirection === 'asc' ? '↑' : '↓'}</span>
                     )}
                   </div>
                 </th>
@@ -470,30 +478,28 @@ export function Plaid() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex justify-center">
-      <div className="w-full max-w-6xl p-6 space-y-8">
+    <div className="page">
+      <div className="container-wide">
         {/* Header */}
-        <div className="text-center py-8">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-transparent mb-4">
+        <div className="page-header">
+          <h1 className="page-title">
             Banking Dashboard
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="page-subtitle">
             Connect your bank account to view and analyze your financial transactions with beautiful insights.
           </p>
         </div>
 
         {/* Status indicators */}
-        <div className="flex justify-center gap-4 mb-8">
-          <div className={`px-6 py-3 rounded-full text-sm font-semibold shadow-sm transition-all duration-300 ${
-            isAuthenticated 
-              ? 'bg-gradient-to-r from-green-400 to-emerald-500 text-white shadow-green-200' 
-              : 'bg-white text-gray-600 border border-gray-200'
+        <div className="flex-center gap-md mb-xl">
+          <div className={`status-indicator ${
+            isAuthenticated ? 'status-success' : 'status-info'
           }`}>
             {isAuthenticated ? '✓ Connected & Authenticated' : '○ Not Connected'}
           </div>
           
           {accessToken && (
-            <div className="px-6 py-3 rounded-full text-sm font-semibold bg-gradient-to-r from-blue-400 to-indigo-500 text-white shadow-sm shadow-blue-200">
+            <div className="status-indicator status-info">
               Active Session: {accessToken.substring(0, 8)}...
             </div>
           )}
@@ -501,46 +507,38 @@ export function Plaid() {
 
         {/* Error display */}
         {error && (
-          <div className="mb-8 p-6 bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-2xl shadow-sm">
-            <div className="flex items-start space-x-3">
+          <div className="mb-xl p-lg bg-gradient-light rounded-2xl shadow" style={{border: '1px solid var(--error-red-light)'}}>
+            <div className="flex gap-md">
               <div className="text-2xl">⚠️</div>
               <div>
-                <div className="font-semibold text-red-800 mb-1">Something went wrong</div>
-                <div className="text-red-700 text-sm">{error}</div>
+                <div className="font-semibold text-error mb-sm">Something went wrong</div>
+                <div className="text-error text-sm">{error}</div>
               </div>
             </div>
           </div>
         )}
 
         {/* Action buttons */}
-        <div className="flex justify-center gap-6 mb-12">
+        <div className="flex flex-wrap justify-center gap-xl mb-2xl">
           <button
             onClick={() => open()}
             disabled={!ready || loading}
-            className={`group relative px-8 py-4 rounded-2xl font-semibold text-white transition-all duration-300 shadow-lg transform hover:scale-105 ${
-              (!ready || loading)
-                ? 'bg-gray-400 cursor-not-allowed shadow-gray-200'
-                : 'bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 shadow-blue-200 hover:shadow-blue-300'
-            }`}
+            className={`btn btn-lg ${(!ready || loading) ? 'btn-secondary' : 'btn-primary'}`}
           >
-            <span className="flex items-center space-x-2">
+            <span className="flex gap-sm">
               <span>{loading ? 'Connecting...' : '🔗 Connect Bank Account'}</span>
-              {loading && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>}
+              {loading && <div className="animate-pulse">⏳</div>}
             </span>
           </button>
 
           <button
             onClick={fetchTransactions}
             disabled={!isAuthenticated || fetchingTransactions}
-            className={`group relative px-8 py-4 rounded-2xl font-semibold text-white transition-all duration-300 shadow-lg transform hover:scale-105 ${
-              (!isAuthenticated || fetchingTransactions)
-                ? 'bg-gray-400 cursor-not-allowed shadow-gray-200'
-                : 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 shadow-green-200 hover:shadow-green-300'
-            }`}
+            className={`btn btn-lg ${(!isAuthenticated || fetchingTransactions) ? 'btn-secondary' : 'btn-success'}`}
           >
-            <span className="flex items-center space-x-2">
+            <span className="flex gap-sm">
               <span>{fetchingTransactions ? 'Loading...' : '📊 Fetch Transactions'}</span>
-              {fetchingTransactions && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>}
+              {fetchingTransactions && <div className="animate-pulse">⏳</div>}
             </span>
           </button>
 
@@ -548,15 +546,11 @@ export function Plaid() {
             <button
               onClick={() => analyzeTransactions(transactions)}
               disabled={analyzing}
-              className={`group relative px-8 py-4 rounded-2xl font-semibold text-white transition-all duration-300 shadow-lg transform hover:scale-105 ${
-                analyzing
-                  ? 'bg-gray-400 cursor-not-allowed shadow-gray-200'
-                  : 'bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 shadow-purple-200 hover:shadow-purple-300'
-              }`}
+              className={`btn btn-lg ${analyzing ? 'btn-secondary' : 'btn-warning'}`}
             >
-              <span className="flex items-center space-x-2">
+              <span className="flex gap-sm">
                 <span>{analyzing ? 'Analyzing...' : '🤖 Analyze with AI'}</span>
-                {analyzing && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>}
+                {analyzing && <div className="animate-pulse">⏳</div>}
               </span>
             </button>
           )}
@@ -565,11 +559,7 @@ export function Plaid() {
             <button
               onClick={handleReset}
               disabled={loading || fetchingTransactions}
-              className={`group relative px-8 py-4 rounded-2xl font-semibold text-white transition-all duration-300 shadow-lg transform hover:scale-105 ${
-                (loading || fetchingTransactions)
-                  ? 'bg-gray-400 cursor-not-allowed shadow-gray-200'
-                  : 'bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 shadow-red-200 hover:shadow-red-300'
-              }`}
+              className={`btn btn-lg ${(loading || fetchingTransactions) ? 'btn-secondary' : 'btn-error'}`}
             >
               🔄 Reset Connection
             </button>

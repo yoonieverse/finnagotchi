@@ -53,31 +53,9 @@ export function SignUp() {
   
 
   return (
-    <div className="ocean-background">
-      {/* Animated Ocean Background */}
-      <div className="absolute inset-0">
-        {/* Animated Waves */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg className="wave-svg w-full h-32" viewBox="0 0 1440 320" preserveAspectRatio="none">
-            <path 
-              fill="#7dd3fc" 
-              fillOpacity="0.4" 
-              d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,138.7C672,128,768,160,864,170.7C960,181,1056,171,1152,154.7C1248,139,1344,117,1392,106.7L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-            />
-          </svg>
-          <svg className="wave-svg w-full h-24 absolute bottom-0" viewBox="0 0 1440 320" preserveAspectRatio="none">
-            <path 
-              fill="#bae6fd" 
-              fillOpacity="0.3" 
-              d="M0,96L48,112C96,128,192,160,288,149.3C384,139,480,85,576,74.7C672,64,768,96,864,106.7C960,117,1056,107,1152,90.7C1248,75,1344,53,1392,42.7L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-            />
-          </svg>
-        </div>
-       
-      </div>
-
+    <div className="signup-container">
       {/* Main Content */}
-      <div className="relative z-10 w-full max-w-md p-6">
+      <div className="signup-content">
           
           {/* App Title */}
           <div className="app-header">
