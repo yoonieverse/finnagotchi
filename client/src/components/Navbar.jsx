@@ -90,6 +90,12 @@ export default function Navbar({ isCollapsed, onToggle }) {
                 <span className="tab-text">Plaid</span>
               </Link>
             </li>
+            <li className={location.pathname === '/goals' ? 'active' : ''}>
+              <Link to="/goals">
+                <img src={tabButtonIcon} alt="Goals" className="tab-button-icon" />
+                <span className="tab-text">Goals</span>
+              </Link>
+            </li>
           </ul>
 
           {/* Bottom: Login/Logout Button */}
