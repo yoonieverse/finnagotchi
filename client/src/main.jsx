@@ -10,10 +10,10 @@ import { Portfolio } from './pages/Portfolio.jsx'
 
 import { Home } from './pages/Home.jsx'
 import { SignUp } from './pages/Signup.jsx'
-import { Settings } from './pages/Settings.jsx'
-
+import { Goals } from './pages/Goals.jsx'
 // Import CSS
 import './styles/main.css'
+
 
 const router = createBrowserRouter([
   {
@@ -45,8 +45,8 @@ const router = createBrowserRouter([
         element: <SignUp/>
       },
       {
-        path:"/settings",
-        element: <Settings/>
+        path:"/goals",
+        element: <Goals/>
       }
 
     ]

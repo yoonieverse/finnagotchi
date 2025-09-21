@@ -3,6 +3,7 @@ import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
 
 
 
+
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_API_KEY,
   authDomain: import.meta.env.VITE_AUTH_DOMAIN,
