@@ -66,16 +66,22 @@ export default function Navbar({ isCollapsed, onToggle }) {
                 <span className="tab-text">Home</span>
               </Link>
             </li>
+            <li className={location.pathname === '/budget' ? 'active' : ''}>
+              <Link to="/budget">
+                <img src={tabButtonIcon} alt="Budget" className="tab-button-icon" />
+                <span className="tab-text">Budget</span>
+              </Link>
+            </li>
             <li className={location.pathname === '/log' ? 'active' : ''}>
               <Link to="/log">
                 <img src={tabButtonIcon} alt="Log" className="tab-button-icon" />
                 <span className="tab-text">Log</span>
               </Link>
             </li>
-            <li className={location.pathname === '/budget' ? 'active' : ''}>
-              <Link to="/budget">
-                <img src={tabButtonIcon} alt="Budget" className="tab-button-icon" />
-                <span className="tab-text">Budget</span>
+            <li className={location.pathname === '/goals' ? 'active' : ''}>
+              <Link to="/goals">
+                <img src={tabButtonIcon} alt="Goals" className="tab-button-icon" />
+                <span className="tab-text">Goals</span>
               </Link>
             </li>
             <li className={location.pathname === '/portfolio' ? 'active' : ''}>
@@ -88,12 +94,6 @@ export default function Navbar({ isCollapsed, onToggle }) {
               <Link to="/plaid">
                 <img src={tabButtonIcon} alt="Plaid" className="tab-button-icon" />
                 <span className="tab-text">Plaid</span>
-              </Link>
-            </li>
-            <li className={location.pathname === '/goals' ? 'active' : ''}>
-              <Link to="/goals">
-                <img src={tabButtonIcon} alt="Goals" className="tab-button-icon" />
-                <span className="tab-text">Goals</span>
               </Link>
             </li>
           </ul>
