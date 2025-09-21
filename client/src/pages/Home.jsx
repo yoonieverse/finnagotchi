@@ -12,7 +12,7 @@ export function Home() {
     const auth = getAuth();
     const [quote, setQuote] = useState([`Hello, ${auth.currentUser?.displayName}! 🌊`])
     const { budget } = useContext(BudgetContext);
-    const [rating, setRating] = useState(8);
+    const [rating, setRating] = useState(3);
     
 
 

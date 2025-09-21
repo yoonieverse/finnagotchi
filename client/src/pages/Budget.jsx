@@ -14,52 +14,52 @@ export function Budget() {
     const convertTransactionsToBudgetItems = (transactions) => {
         return transactions.map(transaction => {
             const name = transaction.name?.toLowerCase() || '';
-            const category = transaction.personal_finance_category?.primary?.toLowerCase() || '';
-            const detailedCategory = transaction.personal_finance_category?.detailed?.toLowerCase() || '';
+        const category = transaction.personal_finance_category?.primary?.toLowerCase() || '';
+        const detailedCategory = transaction.personal_finance_category?.detailed?.toLowerCase() || '';
             
             // Determine if it's income, expense, or savings
             let itemCategory = 'expense'; // default
             let itemType = 'wants'; // default for expenses
-            
+        
             // INCOME/SAVINGS - Handle income and transfers to savings
-            if (category === 'income' || 
-                category === 'transfer_in' ||
-                detailedCategory === 'income_wages' ||
-                detailedCategory === 'transfer_in_savings' ||
-                name.includes('direct deposit') ||
-                name.includes('paycheck') ||
+        if (category === 'income' || 
+            category === 'transfer_in' ||
+            detailedCategory === 'income_wages' ||
+            detailedCategory === 'transfer_in_savings' ||
+            name.includes('direct deposit') ||
+            name.includes('paycheck') ||
                 name.includes('transfer to savings') ||
                 name.includes('transfer from checking - student savings')) {
                 itemCategory = 'income';
                 itemType = 'savings';
             } else {
-                // NEEDS categories - Essential expenses only
-                if (
-                    // Groceries (but not restaurants)
-                    (category === 'food_and_drink' && (
-                        detailedCategory === 'food_and_drink_groceries' ||
-                        name.includes('grocery') || 
-                        name.includes('heb') ||
+        // NEEDS categories - Essential expenses only
+        if (
+            // Groceries (but not restaurants)
+            (category === 'food_and_drink' && (
+                detailedCategory === 'food_and_drink_groceries' ||
+                name.includes('grocery') || 
+                name.includes('heb') ||
                         name.includes('walmart') && name.includes('groceries')
-                    )) ||
-                    // Medical
-                    category === 'medical' ||
+            )) ||
+            // Medical
+            category === 'medical' ||
                     // Essential transportation (gas, not ride shares)
-                    (category === 'transportation' && (
-                        detailedCategory === 'transportation_gas' ||
-                        name.includes('gas station') ||
-                        name.includes('shell') ||
+            (category === 'transportation' && (
+                detailedCategory === 'transportation_gas' ||
+                name.includes('gas station') ||
+                name.includes('shell') ||
                         name.includes('exxon')
-                    )) ||
-                    // Rent and utilities
-                    category === 'rent_and_utilities' ||
+            )) ||
+            // Rent and utilities
+            category === 'rent_and_utilities' ||
                     name.includes('rent payment') ||
                     name.includes('university housing') ||
-                    // Government/taxes
-                    category === 'government_and_non_profit' ||
-                    // Insurance
-                    name.includes('insurance')
-                ) {
+            // Government/taxes
+            category === 'government_and_non_profit' ||
+            // Insurance
+            name.includes('insurance')
+        ) {
                     itemType = 'needs';
                 } else {
                     itemType = 'wants';
@@ -256,156 +256,251 @@ export function Budget() {
         const total = items.reduce((sum, item) => sum + item.ammount, 0);
         
         return (
-            <div key={subcategory} className="mb-4">
-                <h4 className="font-semibold text-lg capitalize mb-2">
-                    {subcategory.replace('_', ' ')} - ${total.toFixed(2)}
-                </h4>
+            <div key={subcategory} className="card-small mb-lg">
+                <div className="flex-between mb-md">
+                    <h4 className="text-lg font-bold text-gray-800 capitalize">
+                        {subcategory.replace('_', ' ')}
+                    </h4>
+                    <div className="status-indicator status-success">
+                        ${total.toFixed(2)}
+                    </div>
+                </div>
                 {items.length > 0 ? (
-                    <ul className="ml-4 space-y-1">
+                    <div className="space-y-sm">
                         {items.map((item, index) => (
-                            <li key={index} className="text-sm">
-                                <span className="font-medium">{item.name}</span> - 
-                                <span className="text-green-600"> ${item.ammount.toFixed(2)}</span> - 
-                                <span className="text-gray-500"> {item.date}</span>
-                            </li>
+                            <div key={index} className="flex-between p-sm bg-gradient-light rounded-lg">
+                                <div className="flex-1">
+                                    <span className="font-medium text-gray-800">{item.name}</span>
+                                    <span className="text-gray-500 ml-md text-sm">{item.date}</span>
+                                </div>
+                                <div className="font-bold text-success">
+                                    ${item.ammount.toFixed(2)}
+                                </div>
+                            </div>
                         ))}
-                    </ul>
+                    </div>
                 ) : (
-                    <p className="text-gray-500 ml-4 text-sm">No transactions in this category</p>
+                    <div className="text-center p-lg text-gray-500">
+                        <div className="text-2xl mb-sm">📭</div>
+                        <p>No transactions in this category</p>
+                    </div>
                 )}
             </div>
         );
     };
 
     return (
-        <div className="max-w-4xl mx-auto p-6">
-            <div className="mb-6">
-                <h1 className="text-3xl font-bold mb-4">Budget Analysis</h1>
+        <div className="page">
+            <div className="container-wide">
+                {/* Page Header */}
+                <div className="page-header">
+                    <h1 className="page-title">Budget Analysis</h1>
+                    <p className="page-subtitle">Track your spending with the 50/30/20 rule</p>
+                </div>
                 
-                <div className="flex gap-4 mb-6">
-                    <button 
-                        onClick={generateBudget}
-                        disabled={!transactions || transactions.length === 0}
-                        className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 text-white px-4 py-2 rounded"
-                    >
-                        Generate 50/30/20 Budget
-                    </button>
+                {/* Action Section */}
+                <div className="card mb-2xl">
+                    <div className="flex-between mb-lg">
+                        <div>
+                            <h2 className="text-2xl font-bold text-primary mb-sm">Generate Your Budget</h2>
+                            <p className="text-gray-600">Analyze your transactions and create a personalized budget plan</p>
+                        </div>
+                        <div className="text-right">
+                            <div className="status-indicator status-info mb-sm">
+                                {transactions ? `${transactions.length} transactions available` : 'No transactions'}
+                            </div>
+                        </div>
+                    </div>
                     
-                    <div className="text-sm text-gray-600 self-center">
-                        {transactions ? `${transactions.length} transactions available` : 'No transactions'}
-                    </div>
-                </div>
-
-                {/* Debug info */}
-                <div className="text-xs text-gray-500 mb-4">
-                    <details>
-                        <summary>Categorization Rules (click to expand)</summary>
-                        <div className="mt-2 p-2 bg-gray-50 rounded">
-                            <p><strong>Needs (50%):</strong> Groceries, medical, utilities, rent, insurance, basic transportation</p>
-                            <p><strong>Wants (30%):</strong> Restaurants, entertainment, shopping, travel, ride-sharing</p>
-                            <p><strong>Savings (20%):</strong> Income and transfers to savings</p>
+                    <div className="flex-center gap-lg">
+                        <button 
+                            onClick={generateBudget}
+                            disabled={!transactions || transactions.length === 0}
+                            className="btn btn-primary btn-lg"
+                        >
+                            🧮 Generate 50/30/20 Budget
+                        </button>
+                        
+                        <div className="text-sm text-gray-500">
+                            <details className="cursor-pointer">
+                                <summary className="font-medium text-primary">📋 Categorization Rules</summary>
+                                <div className="mt-md p-lg bg-gradient-light rounded-xl">
+                                    <div className="grid grid-3 gap-md text-sm">
+                                        <div>
+                                            <h4 className="font-bold text-success mb-sm">Needs (50%)</h4>
+                                            <p>Groceries, medical, utilities, rent, insurance, basic transportation</p>
                         </div>
-                    </details>
-                </div>
+                        <div>
+                                            <h4 className="font-bold text-warning mb-sm">Wants (30%)</h4>
+                                            <p>Restaurants, entertainment, shopping, travel, ride-sharing</p>
+                        </div>
+                        <div>
+                                            <h4 className="font-bold text-accent mb-sm">Savings (20%)</h4>
+                                            <p>Income and transfers to savings</p>
+                                        </div>
+                                    </div>
+                        </div>
+                            </details>
+                        </div>
+                    </div>
+                        </div>
+
+                {!budgetData && (
+                    <div className="card text-center p-3xl">
+                        <div className="text-6xl mb-lg">📊</div>
+                        <h3 className="text-2xl font-bold text-gray-800 mb-md">Ready to Analyze Your Budget?</h3>
+                        <p className="text-gray-600 mb-lg">Click "Generate 50/30/20 Budget" to categorize your transactions and get insights.</p>
+                        <div className="flex-center gap-md">
+                            <div className="status-indicator status-info">💡 Tip: More transactions = better analysis</div>
+                        </div>
+                    </div>
+                )}
+
+                {budgetData && (
+                    <div className="space-y-2xl">
+                        {/* Budget Overview */}
+                        <div className="card bg-gradient-card">
+                            <h2 className="page-title text-center mb-2xl">📈 Budget Overview</h2>
+                            <div className="grid grid-5 gap-lg">
+                                <div className="card-small text-center bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+                                    <div className="text-3xl mb-sm">🏠</div>
+                                    <h3 className="font-bold text-blue-800 mb-sm">Needs (50%)</h3>
+                                    <p className="text-3xl font-bold text-blue-600">${calculateCategoryTotal('needs').toFixed(2)}</p>
+                                </div>
+                                <div className="card-small text-center bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+                                    <div className="text-3xl mb-sm">🎯</div>
+                                    <h3 className="font-bold text-purple-800 mb-sm">Wants (30%)</h3>
+                                    <p className="text-3xl font-bold text-purple-600">${calculateCategoryTotal('wants').toFixed(2)}</p>
+                                </div>
+                                <div className="card-small text-center bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+                                    <div className="text-3xl mb-sm">💰</div>
+                                    <h3 className="font-bold text-green-800 mb-sm">Savings (20%)</h3>
+                                    <p className="text-3xl font-bold text-green-600">${calculateCategoryTotal('savings').toFixed(2)}</p>
             </div>
-
-            {!budgetData && (
-                <div className="text-center py-8">
-                    <p className="text-gray-500">Click "Generate 50/30/20 Budget" to categorize your transactions.</p>
-                </div>
-            )}
-
-            {budgetData && (
-                <div className="space-y-8">
-                    {/* Budget Overview */}
-                    <div className="bg-gray-100 p-6 rounded-lg">
-                        <h2 className="text-2xl font-bold mb-4">Budget Overview</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-                            <div className="bg-blue-50 p-4 rounded">
-                                <h3 className="font-semibold text-blue-800">Needs (50%)</h3>
-                                <p className="text-2xl font-bold text-blue-600">${calculateCategoryTotal('needs').toFixed(2)}</p>
-                            </div>
-                            <div className="bg-purple-50 p-4 rounded">
-                                <h3 className="font-semibold text-purple-800">Wants (30%)</h3>
-                                <p className="text-2xl font-bold text-purple-600">${calculateCategoryTotal('wants').toFixed(2)}</p>
-                            </div>
-                            <div className="bg-green-50 p-4 rounded">
-                                <h3 className="font-semibold text-green-800">Savings (20%)</h3>
-                                <p className="text-2xl font-bold text-green-600">${calculateCategoryTotal('savings').toFixed(2)}</p>
-                            </div>
-                            <div className="bg-gray-50 p-4 rounded">
-                                <h3 className="font-semibold text-gray-800">Total Saved</h3>
-                                <p className="text-2xl font-bold text-gray-600">${totalSaved.toFixed(2)}</p>
-                            </div>
-                            <div className="bg-red-50 p-4 rounded">
-                                <h3 className="font-semibold text-red-800">Total Spent</h3>
-                                <p className="text-2xl font-bold text-red-600">${totalSpent.toFixed(2)}</p>
+                                <div className="card-small text-center bg-gradient-to-br from-gray-50 to-gray-100 border-gray-200">
+                                    <div className="text-3xl mb-sm">📈</div>
+                                    <h3 className="font-bold text-gray-800 mb-sm">Total Saved</h3>
+                                    <p className="text-3xl font-bold text-gray-600">${totalSaved.toFixed(2)}</p>
+                                </div>
+                                <div className="card-small text-center bg-gradient-to-br from-red-50 to-red-100 border-red-200">
+                                    <div className="text-3xl mb-sm">💸</div>
+                                    <h3 className="font-bold text-red-800 mb-sm">Total Spent</h3>
+                                    <p className="text-3xl font-bold text-red-600">${totalSpent.toFixed(2)}</p>
+                        </div>
                             </div>
                         </div>
+
+                        {/* Needs Section */}
+                        <div className="card border-l-4 border-blue-400">
+                            <div className="flex-between mb-xl">
+                                                <div>
+                                    <h2 className="text-3xl font-bold text-blue-800 mb-sm">
+                                        🏠 Needs (50%)
+                                    </h2>
+                                    <p className="text-gray-600">Essential expenses for daily living</p>
+                                                </div>
+                                <div className="text-right">
+                                    <div className="text-4xl font-bold text-blue-600">
+                                        ${calculateCategoryTotal('needs').toFixed(2)}
+                                                    </div>
+                                            </div>
+                                        </div>
+                            <div className="grid grid-2 gap-lg">
+                                {Object.entries(budgetData.needs.subcategories).map(([subcategory, items]) =>
+                                    renderSubcategory(subcategory, items)
+                                )}
+                                    </div>
+                        </div>
+
+                        {/* Wants Section */}
+                        <div className="card border-l-4 border-purple-400">
+                            <div className="flex-between mb-xl">
+                                <div>
+                                    <h2 className="text-3xl font-bold text-purple-800 mb-sm">
+                                        🎯 Wants (30%)
+                                    </h2>
+                                    <p className="text-gray-600">Discretionary spending and entertainment</p>
+                                            </div>
+                                <div className="text-right">
+                                    <div className="text-4xl font-bold text-purple-600">
+                                        ${calculateCategoryTotal('wants').toFixed(2)}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="grid grid-2 gap-lg">
+                                {Object.entries(budgetData.wants.subcategories).map(([subcategory, items]) =>
+                                    renderSubcategory(subcategory, items)
+                                                            )}
+                                                        </div>
+                                                    </div>
+
+                        {/* Savings Section */}
+                        <div className="card border-l-4 border-green-400">
+                            <div className="flex-between mb-xl">
+                                <div>
+                                    <h2 className="text-3xl font-bold text-green-800 mb-sm">
+                                        💰 Savings (20%)
+                                    </h2>
+                                    <p className="text-gray-600">Income and money set aside for the future</p>
+                                            </div>
+                                <div className="text-right">
+                                    <div className="text-4xl font-bold text-green-600">
+                                        ${calculateCategoryTotal('savings').toFixed(2)}
+                                    </div>
+                                </div>
+                    </div>
+                            {budgetData.savings.purchases.length > 0 ? (
+                                <div className="space-y-sm">
+                                    {budgetData.savings.purchases.map((item, index) => (
+                                        <div key={index} className="flex-between p-lg bg-gradient-to-r from-green-50 to-green-100 rounded-xl">
+                                            <div className="flex-1">
+                                                <span className="font-bold text-gray-800">{item.name}</span>
+                                                <span className="text-gray-500 ml-md text-sm">{item.date}</span>
+                                            </div>
+                                            <div className="font-bold text-success text-xl">
+                                                ${item.ammount.toFixed(2)}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center p-3xl text-gray-500">
+                                    <div className="text-4xl mb-md">💸</div>
+                                    <p className="text-lg">No income/savings transactions found</p>
+                                </div>
+                            )}
                     </div>
 
-                    {/* Needs Section */}
-                    <div className="bg-white border-2 border-blue-200 p-6 rounded-lg">
-                        <h2 className="text-2xl font-bold text-blue-800 mb-4">
-                            Needs (50%) - ${calculateCategoryTotal('needs').toFixed(2)}
-                        </h2>
-                        {Object.entries(budgetData.needs.subcategories).map(([subcategory, items]) =>
-                            renderSubcategory(subcategory, items)
-                        )}
-                    </div>
-
-                    {/* Wants Section */}
-                    <div className="bg-white border-2 border-purple-200 p-6 rounded-lg">
-                        <h2 className="text-2xl font-bold text-purple-800 mb-4">
-                            Wants (30%) - ${calculateCategoryTotal('wants').toFixed(2)}
-                        </h2>
-                        {Object.entries(budgetData.wants.subcategories).map(([subcategory, items]) =>
-                            renderSubcategory(subcategory, items)
-                        )}
-                    </div>
-
-                    {/* Savings Section */}
-                    <div className="bg-white border-2 border-green-200 p-6 rounded-lg">
-                        <h2 className="text-2xl font-bold text-green-800 mb-4">
-                            Savings (20%) - ${calculateCategoryTotal('savings').toFixed(2)}
-                        </h2>
-                        {budgetData.savings.purchases.length > 0 ? (
-                            <ul className="ml-4 space-y-1">
-                                {budgetData.savings.purchases.map((item, index) => (
-                                    <li key={index} className="text-sm">
-                                        <span className="font-medium">{item.name}</span> - 
-                                        <span className="text-green-600"> ${item.ammount.toFixed(2)}</span> - 
-                                        <span className="text-gray-500"> {item.date}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <p className="text-gray-500 ml-4 text-sm">No income/savings transactions found</p>
-                        )}
-                    </div>
-
-                    {/* JSON Output for Development */}
-                    <details className="bg-gray-50 p-4 rounded">
-                        <summary className="font-semibold cursor-pointer">View Raw Budget JSON (for development)</summary>
-                        <pre className="mt-2 text-xs overflow-x-auto bg-white p-2 rounded">
-                            {JSON.stringify(budgetData, null, 2)}
+                        {/* Development Tools */}
+                        <div className="grid grid-2 gap-lg">
+                            <details className="card">
+                                <summary className="font-bold text-gray-800 cursor-pointer mb-lg flex items-center gap-sm">
+                                    🔧 View Raw Budget JSON
+                                </summary>
+                                <div className="mt-lg">
+                                    <pre className="text-xs overflow-x-auto bg-gray-50 p-lg rounded-lg max-h-96">
+                                        {JSON.stringify(budgetData, null, 2)}
                         </pre>
+                                </div>
                     </details>
 
-                    {/* Raw Transactions JSON for Development */}
-                    <details className="bg-blue-50 p-4 rounded">
-                        <summary className="font-semibold cursor-pointer">View Raw Transactions JSON (for development)</summary>
-                        <div className="mt-2 space-y-2">
-                            <div className="text-sm text-blue-600">
+                            <details className="card">
+                                <summary className="font-bold text-gray-800 cursor-pointer mb-lg flex items-center gap-sm">
+                                    📊 View Raw Transactions JSON
+                                </summary>
+                                <div className="mt-lg">
+                                    <div className="status-indicator status-info mb-md">
                                 Total transactions: {transactions ? transactions.length : 0}
                             </div>
-                            <pre className="text-xs overflow-x-auto bg-white p-2 rounded max-h-96">
+                                    <pre className="text-xs overflow-x-auto bg-gray-50 p-lg rounded-lg max-h-96">
                                 {JSON.stringify(transactions, null, 2)}
                             </pre>
                         </div>
                     </details>
+                        </div>
                 </div>
             )}
+          </div>
         </div>
     );
 }
