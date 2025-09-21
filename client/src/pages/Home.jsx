@@ -59,8 +59,8 @@ export function Home() {
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 p-6">
-            <div className="max-w-7xl mx-auto">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 p-6 flex justify-center">
+            <div className="w-full max-w-7xl">
                 {/* Header with Finnagotchi */}
                 <div className="flex justify-between items-start mb-8">
                     <div className="flex items-center space-x-6">
