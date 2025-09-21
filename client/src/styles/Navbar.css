@@ -144,6 +144,42 @@
   background-color: #0056b3;
 }
 
+/* Logout Button with Image */
+.logout-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 120px;
+  margin-left: auto;
+  margin-right: auto;
+  overflow: visible;
+}
+
+.logout-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  transform: scale(1.1);
+}
+
+.logout-icon {
+  width: 230px;
+  height: 230px;
+  object-fit: contain;
+}
+
+.logout-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+}
+
 /* Ocean Theme Animations */
 @keyframes float {
   0%, 100% { transform: translateY(0px); }

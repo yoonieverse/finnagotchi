@@ -4,6 +4,7 @@ import "../styles/Navbar.css";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import logoutIcon from "../assets/logout.png";
 
 export default function Navbar({ isCollapsed, onToggle }) {
   const [loggedin, setLoggedIn] = useState(false);
@@ -64,12 +65,21 @@ export default function Navbar({ isCollapsed, onToggle }) {
             <li><Link to="/plaid" >Plaid</Link></li>
           </ul>
 
-          {/* Bottom: Login Button */}
+          {/* Bottom: Login/Logout Button */}
           {!loggedin && <button className="login-btn">
             {<li><Link to="/signup" >Login</Link></li>}
           </button>}
-          {loggedin && <button className="login-btn" onClick={logout}>
-            {<li><Link to="/signup" >Signout</Link></li>}
+          {loggedin && <button className="logout-btn" onClick={logout} title="Logout">
+            <img 
+              src={logoutIcon} 
+              alt="Logout" 
+              className="logout-icon"
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.nextSibling.style.display = 'block';
+              }}
+            />
+            <span className="logout-text" style={{display: 'none'}}>Logout</span>
           </button>}
         </>
       )}
