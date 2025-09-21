@@ -109,7 +109,7 @@ app.post("/quotes", async (req, res) => {
       return res.status(400).json({ error: "transactions is required" });
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const prompt = `
       You are a financial advisor. You are given a list of categorized transactions with a budget ratio between wants, needs and savings.:
@@ -146,7 +146,7 @@ app.post("/finnrating", async (req, res) => {
       return res.status(400).json({ error: "transactions is required" });
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const prompt = `
       You are a financial advisor. You are given a list of categorized transactions with a budget ratio between wants, needs and savings. 
