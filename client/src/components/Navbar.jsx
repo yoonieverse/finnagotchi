@@ -27,7 +27,7 @@ export default function Navbar() {
   return (
     <nav className="navbar">
       {/* Left: Logo */}
-      <div className="logo">MyApp</div> 
+      <div className="logo">Finnagotchi</div> 
       
       {/* Center: Nav Links */}
       <ul className="nav-links">
@@ -36,7 +36,6 @@ export default function Navbar() {
         <li><Link to="/budget" >Budget</Link></li>
         <li><Link to="/portfolio" >Portfolio</Link></li>
         <li><Link to="/plaid" >Plaid</Link></li>
-        <li><Link to="/settings" >Settings</Link></li>
       </ul>
 
       {/* Right: Login Button */}

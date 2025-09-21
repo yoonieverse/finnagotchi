@@ -11,7 +11,7 @@ function App() {
 
   useEffect(() => {
     onAuthStateChanged(auth, (data) => {
-      if (data) navigate("/");
+      if (data) navigate("/home");
       else navigate("/signup");
     });
   }, [auth, navigate]);
