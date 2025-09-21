@@ -26,7 +26,7 @@ const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 // ===================
 
 async function analyzeFinancesFromData(transactionData) {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     // Process transaction data for better analysis
     const processedData = transactionData.map(t => ({
         date: t.date,
