@@ -50,23 +50,31 @@ async function analyzeFinancesFromData(transactionData) {
     4. SPECIFIC RECOMMENDATIONS: Provide 2-3 actionable money-saving tips
     5. BUDGET SUGGESTIONS: Suggest budget allocations based on spending patterns
 
-    Format your response as plain text with clear sections. Be specific, helpful, and encouraging. Use emojis to make it engaging but keep it professional. Don't make it too long. make it short yet concise. 
+    Format your response as plain text with clear sections. Be specific, helpful, and encouraging. Use emojis on section titles. Don't make it too long. make it short yet concise. 
 
     Example format:
     📊 SPENDING OVERVIEW
     [Your analysis here]
-
-    🏷️ CATEGORY BREAKDOWN  
+    
+    🏷️ CATEGORY BREAKDOWN
     [Your analysis here]
-
+    
     💡 FINANCIAL HEALTH
     [Your assessment here]
-
+    
     💰 MONEY-SAVING TIPS
     [Your recommendations here]
-
+    
     📈 BUDGET SUGGESTIONS
     [Your suggestions here]
+
+        ⚠️ Important: 
+    - Format the entire response in **valid Markdown**.
+    - Use Markdown headings (##, ###) for section titles. 
+    - Use bullet points and numbered lists where appropriate. 
+    - Emojis may be included in headings (e.g., ## 📊 Spending Overview).
+    - Do not use inline HTML. 
+    - Do not output anything outside the Markdown document.
     `;
 
     const response = await model.generateContent(prompt);

@@ -2,6 +2,8 @@ import { useState, useEffect, useContext } from 'react';
 import { usePlaidLink } from 'react-plaid-link';
 import axios from 'axios';
 import { TransactionContext } from '../contexts/transactionContext';
+import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 
 
 axios.defaults.baseURL = 'http://localhost:3333';
@@ -608,11 +610,9 @@ export function Plaid() {
                         <div className="text-4xl">🧠</div>
                         <div className="flex-1">
                           <h3 className="text-xl font-bold text-gray-800 mb-lg">Analysis Results</h3>
-                          <div className="prose prose-lg max-w-none">
-                            <div className="whitespace-pre-wrap text-gray-700 leading-relaxed text-lg">
-                              {analysis}
+                          <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed text-lg">
+                              <Markdown>{analysis}</Markdown>
                             </div>
-                          </div>
                         </div>
                       </div>
                     </div>
